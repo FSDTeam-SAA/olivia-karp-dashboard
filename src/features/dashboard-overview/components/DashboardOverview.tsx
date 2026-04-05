@@ -191,12 +191,12 @@ export default function DashboardOverview() {
               Quick Actions
             </CardTitle>
           </CardHeader>
-          <CardContent className="p-4 space-y-2">
+          <CardContent className="p-4 space-y-3">
             {quickActions.map((action, i) => (
               <Button
                 key={i}
                 variant="ghost"
-                className="w-full justify-start h-14 gap-4 text-[#004242] font-semibold hover:bg-[#F8FAFB] border border-transparent hover:border-[#E2E8F0] rounded-xl px-4"
+                className="w-full justify-start h-14 gap-4 text-[#004242] font-semibold hover:bg-[#F8FAFB] border-2 border-transparent hover:border-[#E2E8F0] border-[#E2E8F0]  rounded-xl px-4 py-8"
               >
                 <div className="bg-[#F8FAFB] p-2 rounded-lg group-hover:bg-[#E2E8F0] transition-colors">
                   <action.icon className="h-5 w-5" />
