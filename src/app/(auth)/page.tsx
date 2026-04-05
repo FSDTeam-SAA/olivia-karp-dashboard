@@ -78,7 +78,7 @@ export default function RegisterPage() {
       <div className="space-y-2 text-center lg:text-left">
         <h2 className="text-3xl font-bold tracking-tight">Create an account</h2>
         <p className="text-muted-foreground">
-          Enter your details to get started with Olivia Karp.
+          Enter your details to get started with Olivia Karp....
         </p>
       </div>
 
