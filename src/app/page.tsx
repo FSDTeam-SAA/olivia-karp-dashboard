@@ -1,8 +1,13 @@
-export default function Home() {
+import Login from "@/features/auth/component/Login";
+import Link from "next/link";
+import React from "react";
+
+export default function page() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
-      <h1 className="text-4xl font-bold">Template Setup</h1>
-      <p className="mt-4 text-xl">The application root is ready.</p>
-    </main>
+    <div className="flex items-center justify-center min-h-screen">
+      <Link href="/login">
+        <Login />
+      </Link>
+    </div>
   );
 }
