@@ -1,9 +1,10 @@
 // src/features/auth/api/refresh-token.api.ts
-import { api } from "@/lib/api";
+
+import axiosInstance from "@/lib/instance/axios-instance";
 
 export const refreshAccessToken = async (refreshToken: string) => {
   try {
-    const response = await api.post("/auth/refresh-access-token", {
+    const response = await axiosInstance.post("/auth/refresh-access-token", {
       refreshToken,
     });
     return response.data;
