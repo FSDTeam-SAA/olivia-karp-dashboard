@@ -41,7 +41,7 @@ const menuItems = [
   {
     title: "Mentor & Coaches",
     icon: Users,
-    href: "/mentors",
+    href: "/mentors-coaches",
   },
   {
     title: "Courses",
