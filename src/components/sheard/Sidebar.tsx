@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -15,12 +15,20 @@ import {
   Bell,
   Search,
   LogOut,
+  ChevronRight,
 } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
 type SidebarProps = React.HTMLAttributes<HTMLDivElement>;
+
+const contentManagementSubItems = [
+  { title: "Create Job Post", href: "/content-management/create-job-post" },
+  { title: "Create Media Post", href: "/content-management/create-media-post" },
+  { title: "Create Blog Post", href: "/content-management/create-blog-post" },
+  { title: "Create Event Post", href: "/content-management/create-event-post" },
+];
 
 const menuItems = [
   {
@@ -32,6 +40,7 @@ const menuItems = [
     title: "Content Management",
     icon: MonitorPlay,
     href: "/content-management",
+    hasSubmenu: true,
   },
   {
     title: "Opportunities Management",
@@ -50,12 +59,12 @@ const menuItems = [
   },
   {
     title: "Notification",
-    icon: MessageSquare,
+    icon: Bell,
     href: "/notifications",
   },
   {
     title: "Request Massage",
-    icon: Bell,
+    icon: MessageSquare,
     href: "/request-massage",
   },
   {
@@ -72,6 +81,8 @@ const menuItems = [
 
 export default function Sidebar({ className }: SidebarProps) {
   const pathname = usePathname();
+  const isContentManagementActive = pathname.startsWith("/content-management");
+  const [isContentOpen, setIsContentOpen] = useState(isContentManagementActive);
 
   return (
     <aside
@@ -93,6 +104,60 @@ export default function Sidebar({ className }: SidebarProps) {
       {/* Main Navigation */}
       <nav className="flex-1 px-4 py-2 space-y-3 overflow-y-auto custom-scrollbar">
         {menuItems.map((item) => {
+          if (item.hasSubmenu) {
+            return (
+              <div key={item.href}>
+                <button
+                  onClick={() => setIsContentOpen((prev) => !prev)}
+                  className={cn(
+                    "group flex items-center gap-4 px-4 py-4 text-[15px] font-semibold rounded-xl transition-all duration-200 w-full cursor-pointer",
+                    isContentManagementActive
+                      ? "bg-primary text-white shadow-lg shadow-[#00474b]/20"
+                      : "text-primary hover:bg-primary/5",
+                  )}
+                >
+                  <item.icon
+                    className={cn(
+                      "h-5 w-5",
+                      isContentManagementActive ? "text-white" : "text-primary",
+                    )}
+                  />
+                  <div className="flex-1 flex items-center justify-between">
+                    <span>Content Manage...</span>
+                    <ChevronRight
+                      className={cn(
+                        "h-4 w-4 transition-transform duration-200",
+                        isContentOpen && "rotate-90",
+                      )}
+                    />
+                  </div>
+                </button>
+
+                {isContentOpen && (
+                  <div className="ml-6 mt-1 space-y-1 border-l-2 border-gray-200 pl-4">
+                    {contentManagementSubItems.map((subItem) => {
+                      const isSubActive = pathname === subItem.href;
+                      return (
+                        <Link
+                          key={subItem.href}
+                          href={subItem.href}
+                          className={cn(
+                            "block px-3 py-2.5 text-[14px] font-medium rounded-lg transition-all duration-200",
+                            isSubActive
+                              ? "text-primary font-semibold bg-primary/5"
+                              : "text-gray-600 hover:text-primary hover:bg-primary/5",
+                          )}
+                        >
+                          {subItem.title}
+                        </Link>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          }
+
           const isActive = pathname === item.href;
           return (
             <Link
@@ -111,28 +176,7 @@ export default function Sidebar({ className }: SidebarProps) {
                   isActive ? "text-white" : "text-primary",
                 )}
               />
-              <div className="flex-1 flex items-center justify-between">
-                <span>{item.title}</span>
-                {item.title === "Content Management" && !isActive && (
-                  <span className="text-primary opacity-40">
-                    <svg
-                      width="6"
-                      height="10"
-                      viewBox="0 0 6 10"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M1 9L5 5L1 1"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </span>
-                )}
-              </div>
+              <span>{item.title}</span>
             </Link>
           );
         })}
@@ -165,7 +209,7 @@ export default function Sidebar({ className }: SidebarProps) {
           className="w-full justify-center gap-2 border-[1.5px] border-[#ff6b6b] text-[#ff6b6b] hover:bg-[#ff6b6b] hover:text-white transition-all duration-300 rounded-xl h-11 font-bold"
         >
           <LogOut className="h-5 w-5 transform rotate-180" />
-          Logout
+          Log out
         </Button>
       </div>
     </aside>
