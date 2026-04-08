@@ -1,6 +1,6 @@
 "use client";
 
-import { useReducer } from "react";
+import { useEffect, useReducer } from "react";
 import {
   Dialog,
   DialogContent,
@@ -55,24 +55,28 @@ export default function EventPostModal({
   const [formState, dispatch] = useReducer(formReducer, initialState);
   const { lumaUrl } = formState;
 
-  if (open && editData && lumaUrl === "") {
-    dispatch({
-      type: "SET_FORM",
-      payload: {
-        lumaUrl: editData.lumaUrl || "",
-      },
-    });
-  } else if (open && !editData && lumaUrl !== "") {
-    dispatch({
-      type: "SET_FORM",
-      payload: initialState,
-    });
-  } else if (!open) {
-    dispatch({
-      type: "SET_FORM",
-      payload: initialState,
-    });
-  }
+  useEffect(() => {
+    if (open) {
+      if (editData) {
+        dispatch({
+          type: "SET_FORM",
+          payload: {
+            lumaUrl: editData.lumaUrl || "",
+          },
+        });
+      } else {
+        dispatch({
+          type: "SET_FORM",
+          payload: initialState,
+        });
+      }
+    } else {
+      dispatch({
+        type: "SET_FORM",
+        payload: initialState,
+      });
+    }
+  }, [open, editData?._id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

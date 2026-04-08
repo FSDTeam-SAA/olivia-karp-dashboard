@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
+import { useCallback, useState } from "react";
 import {
   Plus,
   Eye,
@@ -36,7 +35,12 @@ export default function BlogPostPage() {
     totalPage: 0,
   };
 
-  const handleDelete = async () => {
+  const handleCloseModal = useCallback(() => {
+    setIsModalOpen(false);
+    setEditingBlog(null);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
     if (!deletingBlogId) return;
     try {
       await deleteMutation.mutateAsync(deletingBlogId);
@@ -45,7 +49,7 @@ export default function BlogPostPage() {
     } catch {
       toast.error("Failed to delete blog");
     }
-  };
+  }, [deletingBlogId, deleteMutation]);
 
   if (isError) {
     return (
@@ -234,17 +238,14 @@ export default function BlogPostPage() {
 
       <BlogPostModal
         open={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setEditingBlog(null);
-        }}
+        onClose={handleCloseModal}
         editData={editingBlog}
       />
 
       <DeleteConfirmDialog
         open={!!deletingBlogId}
         onClose={() => setDeletingBlogId(null)}
-        onConfirm={handleDelete}
+        onConfirm={handleDeleteConfirm}
         title="Delete Blog Post"
         description="Are you sure you want to delete this blog post? This action cannot be undone."
         isLoading={deleteMutation.isPending}
@@ -293,11 +294,9 @@ export default function BlogPostPage() {
                   <span className="font-medium text-[#5f686d] block mb-1">
                     Thumbnail:
                   </span>
-                  <Image
+                  <img
                     src={viewingBlog.thumbnailImage.url}
                     alt="Thumbnail"
-                    width={300}
-                    height={160}
                     className="max-w-full h-40 object-cover rounded-lg"
                   />
                 </div>

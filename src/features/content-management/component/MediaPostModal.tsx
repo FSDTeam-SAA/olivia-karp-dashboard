@@ -79,26 +79,33 @@ export default function MediaPostModal({
   } = formState;
 
   useEffect(() => {
-    if (editData) {
-      dispatch({
-        type: "SET_FORM",
-        payload: {
-          title: editData.title || "",
-          mediaType: editData.mediaType || "expert-interview",
-          sourceType: editData.sourceType || "URL",
-          contentUrl: editData.contentUrl || "",
-          description: editData.description || "",
-          isPublished: editData.isPublished ?? true,
-          isFeatured: editData.isFeatured ?? false,
-        },
-      });
+    if (open) {
+      if (editData) {
+        dispatch({
+          type: "SET_FORM",
+          payload: {
+            title: editData.title || "",
+            mediaType: editData.mediaType || "expert-interview",
+            sourceType: editData.sourceType || "URL",
+            contentUrl: editData.contentUrl || "",
+            description: editData.description || "",
+            isPublished: editData.isPublished ?? true,
+            isFeatured: editData.isFeatured ?? false,
+          },
+        });
+      } else {
+        dispatch({
+          type: "SET_FORM",
+          payload: initialState,
+        });
+      }
     } else {
       dispatch({
         type: "SET_FORM",
         payload: initialState,
       });
     }
-  }, [editData, open]);
+  }, [open, editData?._id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -144,6 +151,7 @@ export default function MediaPostModal({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
             <Label>Title</Label>
+
             <Input
               value={title}
               onChange={(e) =>
@@ -192,7 +200,7 @@ export default function MediaPostModal({
                 className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs"
               >
                 <option value="URL">URL</option>
-                {/* <option value="upload">Upload</option> */}
+                <option value="upload">Upload</option>
               </select>
             </div>
           </div>
@@ -216,10 +224,10 @@ export default function MediaPostModal({
             <Label>Description</Label>
             <RichTextEditor
               content={description}
-              onChange={(value) =>
+              onChange={(html) =>
                 dispatch({
                   type: "UPDATE_FIELD",
-                  payload: { description: value },
+                  payload: { description: html },
                 })
               }
               placeholder="Describe this media content..."

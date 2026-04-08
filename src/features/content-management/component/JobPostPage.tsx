@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import {
   Plus,
   Eye,
@@ -35,7 +35,12 @@ export default function JobPostPage() {
     totalPage: 0,
   };
 
-  const handleDelete = async () => {
+  const handleCloseModal = useCallback(() => {
+    setIsModalOpen(false);
+    setEditingJob(null);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
     if (!deletingJobId) return;
     try {
       await deleteMutation.mutateAsync(deletingJobId);
@@ -44,7 +49,7 @@ export default function JobPostPage() {
     } catch {
       toast.error("Failed to delete job");
     }
-  };
+  }, [deletingJobId, deleteMutation]);
 
   if (isError) {
     return (
@@ -242,17 +247,14 @@ export default function JobPostPage() {
 
       <JobPostModal
         open={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setEditingJob(null);
-        }}
+        onClose={handleCloseModal}
         editData={editingJob}
       />
 
       <DeleteConfirmDialog
         open={!!deletingJobId}
         onClose={() => setDeletingJobId(null)}
-        onConfirm={handleDelete}
+        onConfirm={handleDeleteConfirm}
         title="Delete Job Post"
         description="Are you sure you want to delete this job post? This action cannot be undone."
         isLoading={deleteMutation.isPending}

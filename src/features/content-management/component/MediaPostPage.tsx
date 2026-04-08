@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import {
   Plus,
   Eye,
@@ -35,7 +35,12 @@ export default function MediaPostPage() {
     totalPage: 0,
   };
 
-  const handleDelete = async () => {
+  const handleCloseModal = useCallback(() => {
+    setIsModalOpen(false);
+    setEditingMedia(null);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
     if (!deletingMediaId) return;
     try {
       await deleteMutation.mutateAsync(deletingMediaId);
@@ -44,7 +49,7 @@ export default function MediaPostPage() {
     } catch {
       toast.error("Failed to delete media");
     }
-  };
+  }, [deletingMediaId, deleteMutation]);
 
   if (isError) {
     return (
@@ -247,17 +252,14 @@ export default function MediaPostPage() {
 
       <MediaPostModal
         open={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setEditingMedia(null);
-        }}
+        onClose={handleCloseModal}
         editData={editingMedia}
       />
 
       <DeleteConfirmDialog
         open={!!deletingMediaId}
         onClose={() => setDeletingMediaId(null)}
-        onConfirm={handleDelete}
+        onConfirm={handleDeleteConfirm}
         title="Delete Media Post"
         description="Are you sure you want to delete this media post? This action cannot be undone."
         isLoading={deleteMutation.isPending}

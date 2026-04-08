@@ -58,10 +58,19 @@ export interface Event {
 }
 
 // ============ MEDIA ============
+export type MediaType =
+  | "video"
+  | "podcast"
+  | "event-recording"
+  | "expert-interview"
+  | "insight"
+  | "blog"
+  | "resource";
+
 export interface Media {
   _id: string;
   title: string;
-  mediaType: string;
+  mediaType: MediaType;
   sourceType: string;
   contentUrl: string;
   description: string;

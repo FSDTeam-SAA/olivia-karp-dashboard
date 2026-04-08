@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import {
   Plus,
   Trash2,
@@ -37,7 +37,7 @@ export default function EventPostPage() {
     totalPage: 0,
   };
 
-  const handleDelete = async () => {
+  const handleDelete = useCallback(async () => {
     if (!deletingEventId) return;
     try {
       await deleteMutation.mutateAsync(deletingEventId);
@@ -46,21 +46,35 @@ export default function EventPostPage() {
     } catch {
       toast.error("Failed to delete event");
     }
-  };
+  }, [deletingEventId, deleteMutation]);
 
-  const handleTogglePublish = async (event: Event) => {
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!deletingEventId) return;
     try {
-      await togglePublishMutation.mutateAsync({
-        eventId: event._id,
-        isPublished: !event.isPublished,
-      });
-      toast.success(
-        event.isPublished ? "Event unpublished" : "Event published",
-      );
+      await deleteMutation.mutateAsync(deletingEventId);
+      toast.success("Event deleted successfully");
+      setDeletingEventId(null);
     } catch {
-      toast.error("Failed to update event status");
+      toast.error("Failed to delete event");
     }
-  };
+  }, [deletingEventId, deleteMutation]);
+
+  const handleTogglePublish = useCallback(
+    async (event: Event) => {
+      try {
+        await togglePublishMutation.mutateAsync({
+          eventId: event._id,
+          isPublished: !event.isPublished,
+        });
+        toast.success(
+          event.isPublished ? "Event unpublished" : "Event published",
+        );
+      } catch {
+        toast.error("Failed to update event status");
+      }
+    },
+    [togglePublishMutation],
+  );
 
   if (isError) {
     return (
@@ -239,7 +253,7 @@ export default function EventPostPage() {
       <DeleteConfirmDialog
         open={!!deletingEventId}
         onClose={() => setDeletingEventId(null)}
-        onConfirm={handleDelete}
+        onConfirm={handleDeleteConfirm}
         title="Delete Event"
         description="Are you sure you want to delete this event? This action cannot be undone."
         isLoading={deleteMutation.isPending}
