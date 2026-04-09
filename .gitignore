@@ -40,3 +40,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 /.history
+
+# ignore postman .json
+# Olivia_Karp.postman_collection.json
