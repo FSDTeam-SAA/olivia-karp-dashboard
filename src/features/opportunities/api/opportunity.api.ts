@@ -34,6 +34,17 @@ export const deleteJob = async (jobId: string) => {
   return response.data;
 };
 
+export const updateJobStatus = async ({
+  jobId,
+  status,
+}: {
+  jobId: string;
+  status: "open" | "closed" | "filled";
+}) => {
+  const response = await axiosInstance.put(`/jobs/${jobId}`, { status });
+  return response.data;
+};
+
 // ============ APPLY-JOB ============
 
 export const getAppliedJobs = async (params?: {

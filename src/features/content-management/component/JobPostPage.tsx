@@ -9,7 +9,7 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { useJobs, useDeleteJob } from "../hooks/useJobs";
+import { useJobs, useDeleteJob, useUpdateJobStatus } from "../hooks/useJobs";
 import { Job, Meta } from "../types/content.types";
 import JobPostModal from "./JobPostModal";
 import DeleteConfirmDialog from "./DeleteConfirmDialog";
@@ -26,6 +26,7 @@ export default function JobPostPage() {
 
   const { data: response, isLoading, isError } = useJobs({ page, limit });
   const deleteMutation = useDeleteJob();
+  const statusMutation = useUpdateJobStatus();
 
   const jobs: Job[] = response?.data || [];
   const meta: Meta = response?.meta || {
@@ -149,15 +150,37 @@ export default function JobPostPage() {
                           {job.jobType}
                         </td>
                         <td className="px-4 py-4 text-center">
-                          <span
-                            className={`inline-flex rounded-full px-3 py-1 text-[12px] font-medium ${
+                          <select
+                            value={job.status}
+                            onChange={async (e) => {
+                              const newStatus = e.target.value as
+                                | "open"
+                                | "closed"
+                                | "filled";
+                              try {
+                                await statusMutation.mutateAsync({
+                                  jobId: job._id,
+                                  status: newStatus,
+                                });
+                                toast.success(
+                                  `Job status updated to ${newStatus}`,
+                                );
+                              } catch {
+                                toast.error("Failed to update job status");
+                              }
+                            }}
+                            className={`cursor-pointer rounded-full px-3 py-1 text-[12px] font-medium border-none outline-none ${
                               job.status === "open"
                                 ? "bg-[#cdeed9] text-[#0d6b42]"
-                                : "bg-[#fde2e2] text-[#d9534f]"
+                                : job.status === "filled"
+                                  ? "bg-[#e8f1fa] text-[#367588]"
+                                  : "bg-[#fde2e2] text-[#d9534f]"
                             }`}
                           >
-                            {job.status === "open" ? "Open" : "Closed"}
-                          </span>
+                            <option value="open">Open</option>
+                            <option value="closed">Closed</option>
+                            <option value="filled">Filled</option>
+                          </select>
                         </td>
                         <td className="px-4 py-4">
                           <div className="flex items-center justify-center gap-5 text-[#004f52]">

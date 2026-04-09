@@ -5,6 +5,7 @@ import {
   deleteJob,
   getAppliedJobs,
   updateApplyJobStatus,
+  updateJobStatus,
 } from "../api/opportunity.api";
 
 export const useOpportunityJobs = (params?: {
@@ -57,6 +58,16 @@ export const useUpdateApplyJobStatus = () => {
     mutationFn: updateApplyJobStatus,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["applied-jobs"] });
+    },
+  });
+};
+
+export const useUpdateJobStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateJobStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["opportunity-jobs"] });
     },
   });
 };

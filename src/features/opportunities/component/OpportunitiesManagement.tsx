@@ -13,6 +13,7 @@ import {
   useOpportunityJobs,
   useDeleteOpportunityJob,
   useAppliedJobs,
+  useUpdateJobStatus,
 } from "../hooks/useOpportunities";
 import type { Job, Meta } from "../types/opportunity.types";
 import DeleteConfirmDialog from "@/features/content-management/component/DeleteConfirmDialog";
@@ -53,6 +54,8 @@ function getStatusBadge(status: string) {
       return { label: "Running", bg: "bg-[#e6f6f3]", text: "text-[#004242]" };
     case "closed":
       return { label: "Closed", bg: "bg-[#fef3c7]", text: "text-[#b45309]" };
+    case "filled":
+      return { label: "Filled", bg: "bg-[#e8f1fa]", text: "text-[#367588]" };
     case "pending":
       return { label: "Pending", bg: "bg-[#fef3c7]", text: "text-[#b45309]" };
     case "shortlisted":
@@ -93,6 +96,7 @@ export default function OpportunitiesManagement() {
   } = useAppliedJobs(isAppliedTab ? { page, limit } : undefined);
 
   const deleteMutation = useDeleteOpportunityJob();
+  const statusMutation = useUpdateJobStatus();
 
   const isLoading = isAppliedTab ? appliedLoading : jobsLoading;
   const isError = isAppliedTab ? appliedError : jobsError;
@@ -284,11 +288,41 @@ export default function OpportunitiesManagement() {
                               {formatDate(job.deathLine)}
                             </td>
                             <td className="px-4 py-4 text-center">
-                              <span
-                                className={`inline-flex items-center justify-center rounded-full px-3 py-1 text-xs font-medium ${badge.bg} ${badge.text}`}
-                              >
-                                {badge.label}
-                              </span>
+                              {isAppliedTab ? (
+                                <span
+                                  className={`inline-flex items-center justify-center rounded-full px-3 py-1 text-xs font-medium ${badge.bg} ${badge.text}`}
+                                >
+                                  {badge.label}
+                                </span>
+                              ) : (
+                                <select
+                                  value={job.status}
+                                  onChange={async (e) => {
+                                    const newStatus = e.target.value as
+                                      | "open"
+                                      | "closed"
+                                      | "filled";
+                                    try {
+                                      await statusMutation.mutateAsync({
+                                        jobId: job._id,
+                                        status: newStatus,
+                                      });
+                                      toast.success(
+                                        `Job status updated to ${newStatus}`,
+                                      );
+                                    } catch {
+                                      toast.error(
+                                        "Failed to update job status",
+                                      );
+                                    }
+                                  }}
+                                  className={`cursor-pointer rounded-full px-3 py-1 text-xs font-medium border-none outline-none ${badge.bg} ${badge.text}`}
+                                >
+                                  <option value="open">Running</option>
+                                  <option value="closed">Closed</option>
+                                  <option value="filled">Filled</option>
+                                </select>
+                              )}
                             </td>
                             <td className="px-4 py-4">
                               <div className="flex items-center justify-center gap-2.5">
