@@ -17,7 +17,7 @@ import {
   LogOut,
   ChevronRight,
 } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
@@ -184,7 +184,7 @@ export default function Sidebar({ className }: SidebarProps) {
 
       {/* User Session Section */}
       <div className="p-6 mt-auto">
-        <div className="flex items-center gap-3 mb-6 px-2">
+        {/* <div className="flex items-center gap-3 mb-6 px-2">
           <Avatar className="h-12 w-12 border-2 border-white shadow-md">
             <AvatarImage
               src="/images/avatar-placeholder.png"
@@ -202,7 +202,7 @@ export default function Sidebar({ className }: SidebarProps) {
               Admin
             </span>
           </div>
-        </div>
+        </div> */}
 
         <Button
           variant="outline"

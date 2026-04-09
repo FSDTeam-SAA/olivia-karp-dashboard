@@ -2,15 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import {
-  MapPin,
-  Pencil,
-  Ban,
-  ChevronLeft,
-  ChevronRight,
-  Plus,
-  Check,
-} from "lucide-react";
+import { MapPin, ChevronLeft, ChevronRight, Plus, Check } from "lucide-react";
 import { MentorCoach, Meta } from "../types/mentor.types";
 import { MentorProfileModal } from "./MentorProfileModal";
 import { AddMentorModal } from "./AddMentorModal";
@@ -110,14 +102,6 @@ function MentorCard({
           className="flex-1 rounded-[8px] border-2 border-[#004f52] bg-white px-4 py-2.5 text-[14px] font-semibold text-[#004f52] transition cursor-pointer bg-[#f4fbfb]"
         >
           View Profile
-        </button>
-
-        <button className="flex h-[42px] w-[42px] items-center justify-center rounded-[8px] bg-[#004f52] text-white transition hover:bg-[#003b3d] cursor-pointer">
-          <Pencil className="h-4 w-4" />
-        </button>
-
-        <button className="flex h-[42px] w-[42px] items-center justify-center rounded-[8px] bg-[#004f52] text-white transition hover:bg-[#003b3d] cursor-pointer">
-          <Ban className="h-4 w-4" />
         </button>
 
         {!item.isApproved && (

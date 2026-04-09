@@ -5,8 +5,19 @@ import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useMyProfile } from "@/features/settings/hooks/useSettings";
 
 export default function Header() {
+  const { data } = useMyProfile();
+  const user = data?.data;
+
+  const fullName = user
+    ? `${user.firstName || ""} ${user.lastName || ""}`.trim()
+    : "";
+  const initials = user
+    ? `${user.firstName?.[0] || ""}${user.lastName?.[0] || ""}`
+    : "";
+
   return (
     <header className="sticky top-0 z-30 flex h-20 w-full items-center justify-between bg-white px-8 md:px-10 border-b border-muted/20 bg-white shadow-sm border-r">
       {/* Search Bar - Left Aligned */}
@@ -25,12 +36,12 @@ export default function Header() {
       {/* User Profile - Right Aligned */}
       <div className="flex items-center gap-4">
         <span className="text-sm font-bold text-foreground tracking-tight">
-          Olivia Karp
+          {fullName || "Admin"}
         </span>
         <Avatar className="h-12 w-12 border-2 border-white shadow-sm hover:shadow-md transition-shadow">
-          <AvatarImage src="/images/avatar-placeholder.png" alt="Olivia Karp" />
+          <AvatarImage src={user?.image?.url} alt={fullName || "User"} />
           <AvatarFallback className="bg-primary/10 text-primary font-bold">
-            OK
+            {initials || "U"}
           </AvatarFallback>
         </Avatar>
       </div>
