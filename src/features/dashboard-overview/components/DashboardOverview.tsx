@@ -13,6 +13,7 @@ import {
   Users,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import {
   CartesianGrid,
   Line,
@@ -22,18 +23,10 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { useDashboardOverview } from "../hooks/useDashboardOverview";
-
-const chartData = [
-  { name: "Jan", value1: 1000, value2: 800 },
-  { name: "Feb", value1: 1500, value2: 1200 },
-  { name: "Mar", value1: 1300, value2: 1100 },
-  { name: "Apr", value1: 2000, value2: 1400 },
-  { name: "May", value1: 1800, value2: 1600 },
-  { name: "Jun", value1: 2500, value2: 1900 },
-  { name: "Jul", value1: 2200, value2: 2100 },
-  { name: "Aug", value1: 3000, value2: 2500 },
-];
+import {
+  useDashboardChartOverview,
+  useDashboardOverview,
+} from "../hooks/useDashboardOverview";
 
 const quickActions = [
   {
@@ -57,8 +50,51 @@ const quickActions = [
 
 export default function DashboardOverview() {
   const router = useRouter();
+  const [chartFilter, setChartFilter] = useState("monthly");
+  const [chartYear, setChartYear] = useState("2026");
+
   const { data, isLoading } = useDashboardOverview();
+  const { data: chartResponse } = useDashboardChartOverview(
+    chartFilter,
+    chartYear,
+  );
+
   const analytics = data?.data?.analytics || data?.analytics;
+  const rawChartData = chartResponse?.data?.data || chartResponse?.data || {};
+
+  const formattedChartData = Object.entries(rawChartData).map(([key, val]) => {
+    const value = val as {
+      totalUser?: number;
+      count?: number;
+      total?: number;
+    };
+
+    let shortName = key;
+
+    if (isNaN(Number(key))) {
+      shortName = key.charAt(0).toUpperCase() + key.slice(1, 3);
+    }
+
+    return {
+      name: shortName,
+      value1: value?.totalUser || value?.count || value?.total || 0,
+      value2: Math.max(
+        0,
+        (value?.totalUser || value?.count || value?.total || 0) * 0.8,
+      ),
+    };
+  });
+
+  console.log("CHART DEBUG", {
+    chartFilter,
+    chartResponse,
+    rawChartData,
+    formattedChartData,
+  });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   const displayStats = [
     {
@@ -130,16 +166,32 @@ export default function DashboardOverview() {
               New Members
             </CardTitle>
             <div className="flex items-center gap-4">
-              <Tabs defaultValue="7days" className="w-auto">
+              <Tabs
+                value={chartFilter}
+                onValueChange={setChartFilter}
+                className="w-auto"
+              >
                 <TabsList className="bg-[#F1F5F9] h-9 p-1">
-                  <TabsTrigger value="7days" className="text-xs px-4">
+                  <TabsTrigger value="weeaky" className="text-xs px-4">
                     Weekly
                   </TabsTrigger>
-                  <TabsTrigger value="30days" className="text-xs px-4">
+                  <TabsTrigger value="monthly" className="text-xs px-4">
                     Monthly
                   </TabsTrigger>
-                  <TabsTrigger value="6months" className="text-xs px-4">
-                    Yearly
+                </TabsList>
+              </Tabs>
+
+              <Tabs
+                value={chartYear}
+                onValueChange={setChartYear}
+                className="w-auto ml-2"
+              >
+                <TabsList className="bg-[#F1F5F9] h-9 p-1">
+                  <TabsTrigger value="2025" className="text-xs px-4">
+                    2025
+                  </TabsTrigger>
+                  <TabsTrigger value="2026" className="text-xs px-4">
+                    2026
                   </TabsTrigger>
                 </TabsList>
               </Tabs>
@@ -147,7 +199,7 @@ export default function DashboardOverview() {
           </CardHeader>
           <CardContent className="h-[400px] w-full pr-4">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={chartData}>
+              <LineChart data={formattedChartData}>
                 <CartesianGrid
                   vertical={false}
                   strokeDasharray="3 3"
