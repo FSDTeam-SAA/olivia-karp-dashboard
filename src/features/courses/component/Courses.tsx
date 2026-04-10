@@ -1,14 +1,7 @@
 "use client";
 
+import { ChevronLeft, ChevronRight, Eye, Pencil, Plus } from "lucide-react";
 import { useState } from "react";
-import {
-  Plus,
-  Eye,
-  Pencil,
-  Trash2,
-  ChevronLeft,
-  ChevronRight,
-} from "lucide-react";
 import { useCourses } from "../hooks/useCourses";
 import { Course, Meta } from "../types/courses.types";
 import { AddCourseModal } from "./AddCourseModal";
@@ -110,12 +103,12 @@ export default function Courses() {
                     </td>
 
                     <td className="px-4 py-4 text-[13px] font-medium text-[#252b2f]">
-                      Admin User
+                      {course.category}
                     </td>
 
                     <td className="px-4 py-4 text-center">
                       <div className="text-[15px] leading-5 text-[#252b2f]">
-                        {course.lessonsCount * 100}
+                        {course.totalEnrolled}
                       </div>
                       <div className="text-[13px] leading-5 text-[#7a99b8]">
                         students
@@ -124,9 +117,9 @@ export default function Courses() {
 
                     <td className="px-4 py-4 text-center">
                       <span
-                        className={`inline-flex rounded-full px-3 py-1 text-[12px] font-medium ${course.isLocked ? "bg-[#fff2e8] text-[#d58a53]" : "bg-[#cdeed9] text-[#0d6b42]"}`}
+                        className={`inline-flex rounded-full px-3 py-1 text-[12px] font-medium ${course.isAvailable ? "bg-[#fff2e8] text-[#d58a53]" : "bg-[#cdeed9] text-[#0d6b42]"}`}
                       >
-                        {course.isLocked ? "Locked" : "Published"}
+                        {course.isAvailable ? "Published" : "Draft"}
                       </span>
                     </td>
 
@@ -140,9 +133,6 @@ export default function Courses() {
                         </button>
                         <button className="transition hover:opacity-70 p-1 cursor-pointer">
                           <Pencil className="h-4.5 w-4.5" />
-                        </button>
-                        <button className="transition hover:opacity-70 p-1 text-red-500 hover:bg-red-50 rounded cursor-pointer">
-                          <Trash2 className="h-4.5 w-4.5" />
                         </button>
                       </div>
                     </td>

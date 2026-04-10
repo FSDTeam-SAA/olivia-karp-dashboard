@@ -16,6 +16,16 @@ export type Course = {
   totalDuration: string;
   lessons: Lesson[];
   isLocked: boolean;
+  totalEnrolled: number;
+  lessonCount: number;
+  isAvailable: boolean;
+  currency: string;
+  image: {
+    url?: string;
+    public_id?: string;
+  };
+  price: number;
+  category: string;
   createdAt: string;
   updatedAt: string;
 };
