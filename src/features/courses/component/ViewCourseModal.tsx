@@ -1,5 +1,15 @@
-import { BookOpen, X, Lock, Unlock, Film } from "lucide-react";
+import {
+  BookOpen,
+  Film,
+  Lock,
+  ToggleLeft,
+  ToggleRight,
+  Unlock,
+  X,
+} from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
+import { useToggleCourse } from "../hooks/useCourses";
 import { Course } from "../types/courses.types";
 import ViewCourseModalLesson from "./ViewCourseModalLession";
 interface ViewCourseModalProps {
@@ -9,6 +19,19 @@ interface ViewCourseModalProps {
 
 export function ViewCourseModal({ course, onClose }: ViewCourseModalProps) {
   const [activeVideoUrl, setActiveVideoUrl] = useState<string | null>(null);
+  const [isOn, setIsOn] = useState(course?.isAvailable ?? false);
+  const { mutateAsync: toggleCourse, isPending } = useToggleCourse();
+
+  const handleToggle = async () => {
+    try {
+      await toggleCourse(course._id);
+      setIsOn(!isOn);
+      toast.success(`Course is now ${!isOn ? "published" : "draft"}`);
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to update course availability");
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -56,10 +79,12 @@ export function ViewCourseModal({ course, onClose }: ViewCourseModalProps) {
 
               <span
                 className={`px-3 py-1 rounded ${
-                  course?.isAvailable ? "bg-green-100" : "bg-red-100"
+                  isOn
+                    ? "bg-green-100 text-green-800"
+                    : "bg-red-100 text-red-800"
                 }`}
               >
-                {course?.isAvailable ? "Available" : "Unavailable"}
+                {isOn ? "Available" : "Unavailable"}
               </span>
             </div>
 
@@ -125,9 +150,21 @@ export function ViewCourseModal({ course, onClose }: ViewCourseModalProps) {
         </div>
 
         {/* Footer */}
-        <div className="mt-6 text-right">
-          <button onClick={onClose} className="px-4 py-2 bg-gray-200 rounded">
-            Close
+        <div className="mt-6 flex justify-end items-center gap-2">
+          <span className="text-sm text-gray-600">
+            {isOn ? "Available" : "Unavailable"}
+          </span>
+
+          <button
+            onClick={handleToggle}
+            disabled={isPending}
+            className="disabled:opacity-50 transition-opacity"
+          >
+            {isOn ? (
+              <ToggleRight className="h-8 w-8 text-green-600 cursor-pointer" />
+            ) : (
+              <ToggleLeft className="h-8 w-8 text-gray-400 cursor-pointer" />
+            )}
           </button>
         </div>
       </div>

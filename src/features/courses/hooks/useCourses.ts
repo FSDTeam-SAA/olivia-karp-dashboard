@@ -1,7 +1,7 @@
 // src/features/courses/hooks/useCourses.ts
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getAllCourses, createCourse } from "../api/courses.api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { createCourse, getAllCourses, toggleCourse } from "../api/courses.api";
 
 export const useCourses = (params?: {
   page?: number;
@@ -19,6 +19,16 @@ export const useCreateCourse = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createCourse,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["courses"] });
+    },
+  });
+};
+
+export const useToggleCourse = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: toggleCourse,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["courses"] });
     },

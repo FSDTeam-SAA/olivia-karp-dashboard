@@ -23,3 +23,8 @@ export const createCourse = async (data: FormData) => {
   });
   return response.data;
 };
+
+export const toggleCourse = async (id: string) => {
+  const response = await axiosInstance.put(`/course/availability/${id}`);
+  return response.data;
+};
