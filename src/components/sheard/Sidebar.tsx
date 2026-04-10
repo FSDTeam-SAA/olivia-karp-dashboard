@@ -1,22 +1,21 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import {
+  Bell,
+  Briefcase,
+  ChevronRight,
+  GraduationCap,
   LayoutDashboard,
+  LogOut,
+  MonitorPlay,
+  Search,
   Settings,
   Users,
-  MonitorPlay,
-  Briefcase,
-  GraduationCap,
-  MessageSquare,
-  Bell,
-  Search,
-  LogOut,
-  ChevronRight,
 } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import React, { useState } from "react";
 // import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
@@ -62,11 +61,7 @@ const menuItems = [
     icon: Bell,
     href: "/notifications",
   },
-  {
-    title: "Request Massage",
-    icon: MessageSquare,
-    href: "/request-massage",
-  },
+
   {
     title: "User Data",
     icon: Search,

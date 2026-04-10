@@ -6,12 +6,14 @@ import { useCourses } from "../hooks/useCourses";
 import { Course, Meta } from "../types/courses.types";
 import { AddCourseModal } from "./AddCourseModal";
 import { ViewCourseModal } from "./ViewCourseModal";
+import { EditCourseModal } from "./EditCourseModal";
 
 export default function Courses() {
   const [page, setPage] = useState(1);
   const [limit] = useState(10);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
+  const [courseToEdit, setCourseToEdit] = useState<Course | null>(null);
 
   // We are ignoring type/isApproved for now as they weren't in the demo
   const { data: response, isLoading, isError } = useCourses({ page, limit });
@@ -131,7 +133,10 @@ export default function Courses() {
                         >
                           <Eye className="h-4.5 w-4.5" />
                         </button>
-                        <button className="transition hover:opacity-70 p-1 cursor-pointer">
+                        <button
+                          onClick={() => setCourseToEdit(course)}
+                          className="transition hover:opacity-70 p-1 cursor-pointer"
+                        >
                           <Pencil className="h-4.5 w-4.5" />
                         </button>
                       </div>
@@ -194,6 +199,13 @@ export default function Courses() {
         <ViewCourseModal
           course={selectedCourse}
           onClose={() => setSelectedCourse(null)}
+        />
+      )}
+
+      {courseToEdit && (
+        <EditCourseModal
+          course={courseToEdit}
+          onClose={() => setCourseToEdit(null)}
         />
       )}
     </section>

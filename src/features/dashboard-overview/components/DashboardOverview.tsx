@@ -1,55 +1,28 @@
 "use client";
 
-import React from "react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
-import {
-  ArrowUp,
-  ArrowDown,
-  PlusSquare,
-  Upload,
-  FileText,
-  Image as ImageIcon,
-  Users,
-  FileDown,
-} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-const stats = [
-  {
-    title: "New Members",
-    value: "12,426",
-    change: "+ 36%",
-    trend: "up",
-  },
-  {
-    title: "Total Submissions",
-    value: "1248",
-    change: "+ 36%",
-    trend: "up",
-  },
-  {
-    title: "Pending Submissions",
-    value: "758",
-    change: "- 14%",
-    trend: "down",
-  },
-  {
-    title: "Active Mentors",
-    value: "105",
-    change: "+ 36%",
-    trend: "up",
-  },
-];
+import {
+  ArrowDown,
+  ArrowUp,
+  FileText,
+  Image as ImageIcon,
+  PlusSquare,
+  Upload,
+  Users,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import {
+  CartesianGrid,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import { useDashboardOverview } from "../hooks/useDashboardOverview";
 
 const chartData = [
   { name: "Jan", value1: 1000, value2: 800 },
@@ -63,19 +36,62 @@ const chartData = [
 ];
 
 const quickActions = [
-  { icon: PlusSquare, label: "Job Post" },
-  { icon: Upload, label: "Upload Course" },
-  { icon: FileText, label: "Create Blog" },
-  { icon: ImageIcon, label: "Add Media" },
-  { icon: Users, label: "Add Mentor & Coaches" },
+  {
+    icon: PlusSquare,
+    label: "Job Post",
+    href: "/content-management/create-job-post",
+  },
+  { icon: Upload, label: "Upload Course", href: "/courses" },
+  {
+    icon: FileText,
+    label: "Create Blog",
+    href: "/content-management/create-blog-post",
+  },
+  {
+    icon: ImageIcon,
+    label: "Add Media",
+    href: "/content-management/create-media-post",
+  },
+  { icon: Users, label: "Add Mentor & Coaches", href: "/mentors-coaches" },
 ];
 
 export default function DashboardOverview() {
+  const router = useRouter();
+  const { data, isLoading } = useDashboardOverview();
+  const analytics = data?.data?.analytics || data?.analytics;
+
+  const displayStats = [
+    {
+      title: "Total Members",
+      value: analytics?.members?.total || 0,
+      change: `${(analytics?.members?.growth || 0) >= 0 ? "+" : ""}${analytics?.members?.growth || 0}%`,
+      trend: (analytics?.members?.growth || 0) >= 0 ? "up" : "down",
+    },
+    {
+      title: "Total Subscription",
+      value: analytics?.subscriptions?.total || 0,
+      change: `${(analytics?.subscriptions?.growth || 0) >= 0 ? "+" : ""}${analytics?.subscriptions?.growth || 0}%`,
+      trend: (analytics?.subscriptions?.growth || 0) >= 0 ? "up" : "down",
+    },
+    {
+      title: "Total Mentors and coach",
+      value: analytics?.mentors?.total || 0,
+      change: `${(analytics?.mentors?.growth || 0) >= 0 ? "+" : ""}${analytics?.mentors?.growth || 0}%`,
+      trend: (analytics?.mentors?.growth || 0) >= 0 ? "up" : "down",
+    },
+    {
+      title: "Total Jobs",
+      value: analytics?.jobs?.total || 0,
+      change: `${(analytics?.jobs?.growth || 0) >= 0 ? "+" : ""}${analytics?.jobs?.growth || 0}%`,
+      trend: (analytics?.jobs?.growth || 0) >= 0 ? "up" : "down",
+    },
+  ];
+
   return (
     <div className="space-y-6">
       {/* Stats Grid */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat, i) => (
+        {displayStats.map((stat, i) => (
           <Card key={i} className="border border-[#E2E8F0] shadow-sm">
             <CardContent className="p-6">
               <div className="flex flex-col gap-4">
@@ -117,23 +133,16 @@ export default function DashboardOverview() {
               <Tabs defaultValue="7days" className="w-auto">
                 <TabsList className="bg-[#F1F5F9] h-9 p-1">
                   <TabsTrigger value="7days" className="text-xs px-4">
-                    7 Days
+                    Weekly
                   </TabsTrigger>
                   <TabsTrigger value="30days" className="text-xs px-4">
-                    30 Days
+                    Monthly
                   </TabsTrigger>
                   <TabsTrigger value="6months" className="text-xs px-4">
-                    6 Months
-                  </TabsTrigger>
-                  <TabsTrigger value="12months" className="text-xs px-4">
-                    12 Months
+                    Yearly
                   </TabsTrigger>
                 </TabsList>
               </Tabs>
-              {/* <Button variant="outline" size="sm" className="h-9 gap-2 border-[#E2E8F0] text-[#64748B]">
-                                <FileDown className="h-4 w-4" />
-                                Export PDF
-                            </Button> */}
             </div>
           </CardHeader>
           <CardContent className="h-[400px] w-full pr-4">
@@ -196,7 +205,8 @@ export default function DashboardOverview() {
               <Button
                 key={i}
                 variant="ghost"
-                className="w-full justify-start h-14 gap-4 text-[#004242] font-semibold hover:bg-[#F8FAFB] border-2 border-transparent hover:border-[#E2E8F0] border-[#E2E8F0]  rounded-xl px-4 py-8"
+                onClick={() => router.push(action.href)}
+                className="w-full justify-start h-14 gap-4 text-[#004242] font-semibold hover:bg-[#F8FAFB] border-2 border-transparent hover:border-[#E2E8F0] border-[#E2E8F0]  rounded-xl px-4 py-8 cursor-pointer"
               >
                 <div className="bg-[#F8FAFB] p-2 rounded-lg group-hover:bg-[#E2E8F0] transition-colors">
                   <action.icon className="h-5 w-5" />

@@ -1,12 +1,4 @@
-import {
-  BookOpen,
-  Film,
-  Lock,
-  ToggleLeft,
-  ToggleRight,
-  Unlock,
-  X,
-} from "lucide-react";
+import { BookOpen, Film, ToggleLeft, ToggleRight, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useToggleCourse } from "../hooks/useCourses";
@@ -128,18 +120,11 @@ export function ViewCourseModal({ course, onClose }: ViewCourseModalProps) {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setActiveVideoUrl(lesson?.videoUrl)}
-                      disabled={isLessonLocked}
-                      className={`flex items-center gap-2 px-4 py-2 rounded text-sm ${
-                        isLessonLocked
-                          ? "bg-gray-200 cursor-not-allowed text-gray-500"
-                          : "bg-[#004f52] text-white hover:bg-[#0a7a7d]"
-                      }`}
+                      className={`flex items-center gap-2 px-4 py-2 rounded text-sm bg-[#004f52] cursor-pointer text-white hover:bg-[#0a7a7d]`}
                     >
                       <Film size={16} />
                       Watch
                     </button>
-
-                    {isLessonLocked ? <Lock size={16} /> : <Unlock size={16} />}
                   </div>
                 </div>
               );

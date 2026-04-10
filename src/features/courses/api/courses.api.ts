@@ -28,3 +28,12 @@ export const toggleCourse = async (id: string) => {
   const response = await axiosInstance.put(`/course/availability/${id}`);
   return response.data;
 };
+
+export const updateCourse = async (id: string, data: FormData) => {
+  const response = await axiosInstance.put(`/course/${id}`, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+  return response.data;
+};
