@@ -68,6 +68,11 @@ const menuItems = [
     href: "/user-data",
   },
   {
+    title: "Meet Our Team",
+    icon: Users,
+    href: "/meet-the-team",
+  },
+  {
     title: "Settings",
     icon: Settings,
     href: "/settings",
