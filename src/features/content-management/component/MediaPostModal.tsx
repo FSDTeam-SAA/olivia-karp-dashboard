@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useReducer } from "react";
+import { useEffect, useReducer, useRef, useState } from "react";
+import { Upload, X } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -24,21 +25,27 @@ interface MediaPostModalProps {
 interface FormState {
   title: string;
   mediaType: string;
-  sourceType: string;
+  category: string;
   contentUrl: string;
   description: string;
   isPublished: boolean;
   isFeatured: boolean;
+  mediaFile: File | null;
+  thumbnailImage: File | null;
+  thumbnailPreview: string | null;
 }
 
 const initialState: FormState = {
   title: "",
-  mediaType: "expert-interview",
-  sourceType: "URL",
+  mediaType: "url",
+  category: "",
   contentUrl: "",
   description: "",
   isPublished: true,
   isFeatured: false,
+  mediaFile: null,
+  thumbnailImage: null,
+  thumbnailPreview: null,
 };
 
 type FormAction = {
@@ -62,6 +69,7 @@ export default function MediaPostModal({
   onClose,
   editData,
 }: MediaPostModalProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const isEdit = !!editData;
   const createMutation = useCreateMedia();
   const updateMutation = useUpdateMedia();
@@ -71,11 +79,14 @@ export default function MediaPostModal({
   const {
     title,
     mediaType,
-    sourceType,
+    category,
     contentUrl,
     description,
     isPublished,
     isFeatured,
+    mediaFile,
+    thumbnailImage,
+    thumbnailPreview,
   } = formState;
 
   useEffect(() => {
@@ -85,12 +96,15 @@ export default function MediaPostModal({
           type: "SET_FORM",
           payload: {
             title: editData.title || "",
-            mediaType: editData.mediaType || "expert-interview",
-            sourceType: editData.sourceType || "URL",
+            mediaType: editData.mediaType || "url",
+            category: editData.category || "",
             contentUrl: editData.contentUrl || "",
             description: editData.description || "",
             isPublished: editData.isPublished ?? true,
             isFeatured: editData.isFeatured ?? false,
+            mediaFile: null,
+            thumbnailImage: null,
+            thumbnailPreview: editData.thumbnailImage?.url || null,
           },
         });
       } else {
@@ -110,25 +124,33 @@ export default function MediaPostModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const payload = {
-      title,
-      mediaType,
-      sourceType,
-      contentUrl,
-      description,
-      isPublished,
-      isFeatured,
-    };
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("mediaType", mediaType);
+    formData.append("category", category);
+    formData.append("description", description);
+    formData.append("isPublished", String(isPublished));
+    formData.append("isFeatured", String(isFeatured));
+
+    if (mediaType === "url") {
+      formData.append("contentUrl", contentUrl);
+    } else if (mediaFile) {
+      formData.append("mediaFile", mediaFile);
+    }
+
+    if (thumbnailImage) {
+      formData.append("thumbnailImage", thumbnailImage);
+    }
 
     try {
       if (isEdit) {
         await updateMutation.mutateAsync({
           mediaId: editData._id,
-          data: payload,
+          data: formData,
         });
         toast.success("Media updated successfully");
       } else {
-        await createMutation.mutateAsync(payload);
+        await createMutation.mutateAsync(formData);
         toast.success("Media created successfully");
       }
       onClose();
@@ -176,48 +198,149 @@ export default function MediaPostModal({
                     payload: { mediaType: e.target.value },
                   })
                 }
-                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs"
+                className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors focus:outline-none focus:ring-1 focus:ring-primary"
               >
-                <option value="expert-interview">Expert Interview</option>
+                <option value="url">URL</option>
+                <option value="audio">Audio</option>
+                <option value="files">Files</option>
+              </select>
+            </div>
+            <div className="space-y-1.5">
+              <Label>Category</Label>
+              <select
+                value={category}
+                onChange={(e) =>
+                  dispatch({
+                    type: "UPDATE_FIELD",
+                    payload: { category: e.target.value },
+                  })
+                }
+                className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors focus:outline-none focus:ring-1 focus:ring-primary"
+                required
+              >
+                <option value="" disabled>
+                  Select Category
+                </option>
                 <option value="video">Video</option>
                 <option value="podcast">Podcast</option>
                 <option value="event-recording">Event Recording</option>
+                <option value="expert-interview">Expert Interview</option>
                 <option value="insight">Insight</option>
                 <option value="blog">Blog</option>
                 <option value="resource">Resource</option>
               </select>
             </div>
+          </div>
+
+          {mediaType === "url" && (
             <div className="space-y-1.5">
-              <Label>Source Type</Label>
-              <select
-                value={sourceType}
+              <Label>Content URL</Label>
+              <Input
+                value={contentUrl}
                 onChange={(e) =>
                   dispatch({
                     type: "UPDATE_FIELD",
-                    payload: { sourceType: e.target.value },
+                    payload: { contentUrl: e.target.value },
                   })
                 }
-                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs"
-              >
-                <option value="URL">URL</option>
-                <option value="upload">Upload</option>
-              </select>
+                placeholder="e.g. https://www.youtube.com/watch?v=..."
+                required
+              />
             </div>
-          </div>
+          )}
 
-          <div className="space-y-1.5">
-            <Label>Content URL</Label>
-            <Input
-              value={contentUrl}
-              onChange={(e) =>
-                dispatch({
-                  type: "UPDATE_FIELD",
-                  payload: { contentUrl: e.target.value },
-                })
-              }
-              placeholder="e.g. https://www.youtube.com/watch?v=..."
-              required
-            />
+          {(mediaType === "audio" || mediaType === "files") && (
+            <div className="space-y-1.5">
+              <Label>
+                {mediaType === "audio" ? "Audio File" : "Document File"}
+              </Label>
+              <Input
+                type="file"
+                accept={
+                  mediaType === "audio" ? "audio/*" : ".pdf,.doc,.docx,.txt"
+                }
+                onChange={(e) =>
+                  dispatch({
+                    type: "UPDATE_FIELD",
+                    payload: { mediaFile: e.target.files?.[0] || null },
+                  })
+                }
+                required={!isEdit}
+              />
+            </div>
+          )}
+
+          <div className="space-y-2">
+            <Label>Thumbnail Image</Label>
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              className={`relative flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-xl cursor-pointer transition-all hover:bg-gray-50/50 ${
+                thumbnailPreview ? "border-[#004f52]" : "border-gray-200"
+              }`}
+            >
+              {thumbnailPreview ? (
+                <div className="relative w-full h-full p-2">
+                  <img
+                    src={thumbnailPreview}
+                    alt="Thumbnail preview"
+                    className="w-full h-full object-cover rounded-lg"
+                  />
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      dispatch({
+                        type: "UPDATE_FIELD",
+                        payload: {
+                          thumbnailImage: null,
+                          thumbnailPreview: null,
+                        },
+                      });
+                      if (fileInputRef.current) fileInputRef.current.value = "";
+                    }}
+                    className="absolute top-4 right-4 p-1.5 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors shadow-lg"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                  <div className="p-4 mb-3 rounded-full bg-[#004f52]/5 text-[#004f52]">
+                    <Upload className="h-8 w-8" />
+                  </div>
+                  <p className="mb-2 text-sm text-[#2c3135]">
+                    <span className="font-semibold">Click to upload</span> or
+                    drag and drop
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    SVG, PNG, JPG or GIF (max. 800x400px)
+                  </p>
+                </div>
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                className="hidden"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0] || null;
+                  dispatch({
+                    type: "UPDATE_FIELD",
+                    payload: { thumbnailImage: file },
+                  });
+                  if (file) {
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                      dispatch({
+                        type: "UPDATE_FIELD",
+                        payload: { thumbnailPreview: reader.result as string },
+                      });
+                    };
+                    reader.readAsDataURL(file);
+                  }
+                }}
+              />
+            </div>
           </div>
 
           <div className="space-y-1.5">

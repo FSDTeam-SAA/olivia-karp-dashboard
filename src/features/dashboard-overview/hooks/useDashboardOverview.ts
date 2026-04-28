@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import {
   getDashbaordChartOverview,
   getDashboardOverview,
+  getDashboardRecentActivity,
 } from "../api/dashboardOverviewapi";
 
 export const useDashboardOverview = () => {
@@ -11,9 +12,16 @@ export const useDashboardOverview = () => {
   });
 };
 
-export const useDashboardChartOverview = (filter: string, year: string) => {
+export const useDashboardChartOverview = (type: string, year: string) => {
   return useQuery({
-    queryKey: ["dashboard-chart-overview", filter, year],
-    queryFn: () => getDashbaordChartOverview(filter, year),
+    queryKey: ["dashboard-chart-overview", type, year],
+    queryFn: () => getDashbaordChartOverview(type, year),
+  });
+};
+
+export const useDashboardRecentActivity = () => {
+  return useQuery({
+    queryKey: ["dashboard-recent-activity"],
+    queryFn: getDashboardRecentActivity,
   });
 };
