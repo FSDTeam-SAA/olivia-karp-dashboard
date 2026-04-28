@@ -19,6 +19,8 @@ import React, { useState } from "react";
 // import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { LogoutModal } from "./LogoutModal";
+import { signOut } from "next-auth/react";
 
 type SidebarProps = React.HTMLAttributes<HTMLDivElement>;
 
@@ -83,6 +85,17 @@ export default function Sidebar({ className }: SidebarProps) {
   const pathname = usePathname();
   const isContentManagementActive = pathname.startsWith("/content-management");
   const [isContentOpen, setIsContentOpen] = useState(isContentManagementActive);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+
+  const handleLogout = async () => {
+    // Clear all potential data
+    localStorage.clear();
+    sessionStorage.clear();
+
+    // Sign out from NextAuth and redirect to login
+    await signOut({ callbackUrl: "https://actonclimate.co/" });
+    setIsLogoutModalOpen(false);
+  };
 
   return (
     <aside
@@ -206,12 +219,19 @@ export default function Sidebar({ className }: SidebarProps) {
 
         <Button
           variant="outline"
+          onClick={() => setIsLogoutModalOpen(true)}
           className="w-full justify-center gap-2 border-[1.5px] border-[#ff6b6b] text-[#ff6b6b] hover:bg-[#ff6b6b] hover:text-white transition-all duration-300 rounded-xl h-11 font-bold"
         >
           <LogOut className="h-5 w-5 transform rotate-180" />
           Log out
         </Button>
       </div>
+
+      <LogoutModal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={handleLogout}
+      />
     </aside>
   );
 }

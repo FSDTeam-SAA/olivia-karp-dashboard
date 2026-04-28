@@ -110,7 +110,7 @@ export default function MediaPostPage() {
                         Type
                       </th>
                       <th className="px-4 py-4 text-center text-[14px] font-semibold text-[#252b2f]">
-                        Source
+                        Category
                       </th>
                       <th className="px-4 py-4 text-center text-[14px] font-semibold text-[#252b2f]">
                         Published
@@ -140,7 +140,7 @@ export default function MediaPostPage() {
                           </span>
                         </td>
                         <td className="px-4 py-4 text-center text-[14px] text-[#5f686d]">
-                          {media.sourceType}
+                          {media.category}
                         </td>
                         <td className="px-4 py-4 text-center">
                           <span
@@ -294,10 +294,8 @@ export default function MediaPostPage() {
                 </span>
               </div>
               <div>
-                <span className="font-medium text-[#5f686d]">Source:</span>{" "}
-                <span className="text-[#2c3135]">
-                  {viewingMedia.sourceType}
-                </span>
+                <span className="font-medium text-[#5f686d]">Category:</span>{" "}
+                <span className="text-[#2c3135]">{viewingMedia.category}</span>
               </div>
               <div>
                 <span className="font-medium text-[#5f686d]">URL:</span>{" "}

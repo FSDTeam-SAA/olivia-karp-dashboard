@@ -15,16 +15,10 @@ export const getSingleMedia = async (mediaId: string) => {
   return response.data;
 };
 
-export const createMedia = async (data: {
-  title: string;
-  mediaType: string;
-  sourceType: string;
-  contentUrl: string;
-  description: string;
-  isPublished: boolean;
-  isFeatured: boolean;
-}) => {
-  const response = await axiosInstance.post("/media/create-media", data);
+export const createMedia = async (data: FormData) => {
+  const response = await axiosInstance.post("/media/create-media", data, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
   return response.data;
 };
 
@@ -33,19 +27,14 @@ export const updateMedia = async ({
   data,
 }: {
   mediaId: string;
-  data: Partial<{
-    title: string;
-    mediaType: string;
-    sourceType: string;
-    contentUrl: string;
-    description: string;
-    isPublished: boolean;
-    isFeatured: boolean;
-  }>;
+  data: FormData;
 }) => {
   const response = await axiosInstance.patch(
     `/media/update-media/${mediaId}`,
     data,
+    {
+      headers: { "Content-Type": "multipart/form-data" },
+    },
   );
   return response.data;
 };

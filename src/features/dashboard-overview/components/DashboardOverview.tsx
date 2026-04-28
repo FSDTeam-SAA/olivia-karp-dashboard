@@ -27,6 +27,7 @@ import {
   useDashboardChartOverview,
   useDashboardOverview,
 } from "../hooks/useDashboardOverview";
+import RecentActivityTable from "./RecentActivityTable";
 
 const quickActions = [
   {
@@ -172,7 +173,7 @@ export default function DashboardOverview() {
                 className="w-auto"
               >
                 <TabsList className="bg-[#F1F5F9] h-9 p-1">
-                  <TabsTrigger value="weeaky" className="text-xs px-4">
+                  <TabsTrigger value="weekly" className="text-xs px-4">
                     Weekly
                   </TabsTrigger>
                   <TabsTrigger value="monthly" className="text-xs px-4">
@@ -269,6 +270,9 @@ export default function DashboardOverview() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Recent Activity Table */}
+      <RecentActivityTable />
     </div>
   );
 }

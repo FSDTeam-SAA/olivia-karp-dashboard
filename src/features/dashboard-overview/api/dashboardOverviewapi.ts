@@ -8,11 +8,16 @@ export const getDashboardOverview = async () => {
 };
 
 export const getDashbaordChartOverview = async (
-  filter: string = "monthly",
+  type: string = "monthly",
   year: string = "2026",
 ) => {
   const response = await axiosInstance.get(
-    `/analytics/chart?filter=${filter}&year=${year}`,
+    `/analytics/chat?type=${type}&year=${year}`,
   );
+  return response.data;
+};
+
+export const getDashboardRecentActivity = async () => {
+  const response = await axiosInstance.get("/analytics/activity");
   return response.data;
 };
