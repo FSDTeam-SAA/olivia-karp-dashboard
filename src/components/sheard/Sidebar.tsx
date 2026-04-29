@@ -11,6 +11,7 @@ import {
   MonitorPlay,
   Search,
   Settings,
+  Star,
   Users,
 } from "lucide-react";
 import Link from "next/link";
@@ -57,6 +58,11 @@ const menuItems = [
     title: "Courses",
     icon: GraduationCap,
     href: "/courses",
+  },
+  {
+    title: "Reviews",
+    icon: Star,
+    href: "/reviews",
   },
   {
     title: "Notification",
