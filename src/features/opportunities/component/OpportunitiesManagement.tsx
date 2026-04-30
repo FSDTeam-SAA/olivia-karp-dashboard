@@ -89,6 +89,7 @@ export default function OpportunitiesManagement() {
     isError: jobsError,
   } = useOpportunityJobs({ page, limit });
 
+  //  console.log("job opportunities", jobsResponse)
   const {
     data: appliedResponse,
     isLoading: appliedLoading,

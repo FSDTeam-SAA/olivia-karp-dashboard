@@ -59,10 +59,10 @@ function MentorCard({
 
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-[16px] font-medium leading-none text-[#384148]">
+            <h3 className="text-[16px] font-semibold leading-none text-[#384148]">
               {fullName}
             </h3>
-            <span className="rounded-full bg-[#eef3ff] px-2 py-0.5 text-[10px] text-[#6f8cff]">
+            <span className="rounded-full bg-[#eef3ff] px-2 py-0.5 text-[10px] text-[#6f8cff] font-bold">
               {item.type === "mentor" ? "Mentor" : "Coach"}
             </span>
           </div>

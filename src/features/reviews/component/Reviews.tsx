@@ -2,7 +2,11 @@
 
 import { ChevronLeft, ChevronRight, Star, Trash2, User } from "lucide-react";
 import { useState } from "react";
-import { useDeleteReview, useReviews } from "../hooks/useReviews";
+import {
+  useDeleteReview,
+  useReviews,
+  useToggleReviewApproval,
+} from "../hooks/useReviews";
 import { Review, Meta } from "../types/reviews.types";
 import { toast } from "sonner";
 
@@ -12,6 +16,8 @@ export default function Reviews() {
 
   const { data: response, isLoading, isError } = useReviews({ page, limit });
   const { mutate: deleteReview } = useDeleteReview();
+  const { mutate: toggleApproval, isPending: isToggling } =
+    useToggleReviewApproval();
 
   const reviews: Review[] = response?.data || [];
   const meta: Meta = response?.meta || {
@@ -22,16 +28,32 @@ export default function Reviews() {
   };
 
   const handleDelete = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this review?")) {
-      deleteReview(id, {
+    deleteReview(id, {
+      onSuccess: () => {
+        toast.success("Review deleted successfully");
+      },
+      onError: () => {
+        toast.error("Failed to delete review");
+      },
+    });
+  };
+
+  const handleToggleApproval = (review: Review) => {
+    toggleApproval(
+      { reviewId: review._id, isApproved: !review.isApproved },
+      {
         onSuccess: () => {
-          toast.success("Review deleted successfully");
+          toast.success(
+            review.isApproved
+              ? "Review marked as pending"
+              : "Review approved successfully",
+          );
         },
         onError: () => {
-          toast.error("Failed to delete review");
+          toast.error("Failed to update review status");
         },
-      });
-    }
+      },
+    );
   };
 
   const renderStars = (rating: number) => {
@@ -73,7 +95,7 @@ export default function Reviews() {
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div>
             <h1 className="text-[20px] font-semibold text-[#2c3135] md:text-[22px]">
-              User Reviews & Feedback
+              Reviews & Feedback
             </h1>
             <div className="mt-2 flex items-center gap-2 text-[13px] text-[#7b848a]">
               <span>Dashboard</span>
@@ -146,15 +168,35 @@ export default function Reviews() {
                     </td>
 
                     <td className="px-4 py-4 text-center">
-                      <span
-                        className={`inline-flex rounded-full px-3 py-1 text-[12px] font-medium ${
+                      <button
+                        onClick={() => handleToggleApproval(review)}
+                        disabled={isToggling}
+                        title={
                           review.isApproved
-                            ? "bg-[#cdeed9] text-[#0d6b42]"
-                            : "bg-[#fff2e8] text-[#d58a53]"
+                            ? "Click to set Pending"
+                            : "Click to Approve"
+                        }
+                        className={`relative inline-flex h-6 w-11 cursor-pointer items-center rounded-full transition-colors duration-200 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed ${
+                          review.isApproved ? "bg-[#004f52]" : "bg-[#d8dfdf]"
+                        }`}
+                      >
+                        <span
+                          className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform duration-200 ${
+                            review.isApproved
+                              ? "translate-x-6"
+                              : "translate-x-1"
+                          }`}
+                        />
+                      </button>
+                      <p
+                        className={`mt-1 text-[11px] font-semibold ${
+                          review.isApproved
+                            ? "text-[#0d6b42]"
+                            : "text-[#d58a53]"
                         }`}
                       >
                         {review.isApproved ? "Approved" : "Pending"}
-                      </span>
+                      </p>
                     </td>
 
                     <td className="px-4 py-4 text-center text-[13px] text-[#7b848a]">
