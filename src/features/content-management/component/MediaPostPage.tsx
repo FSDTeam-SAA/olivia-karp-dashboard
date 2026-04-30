@@ -12,6 +12,7 @@ import {
 import { useMedia, useDeleteMedia } from "../hooks/useMedia";
 import { Media, Meta } from "../types/content.types";
 import MediaPostModal from "./MediaPostModal";
+import MediaDetailsModal from "./MediaDetailsModal";
 import DeleteConfirmDialog from "./DeleteConfirmDialog";
 import TableSkeleton from "./TableSkeleton";
 import { toast } from "sonner";
@@ -265,73 +266,11 @@ export default function MediaPostPage() {
         isLoading={deleteMutation.isPending}
       />
 
-      {/* View Media Details Dialog */}
       {viewingMedia && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-          onClick={() => setViewingMedia(null)}
-        >
-          <div
-            className="bg-white rounded-xl max-w-[600px] w-full mx-4 max-h-[80vh] overflow-y-auto p-6"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-[#2c3135]">
-                {viewingMedia.title}
-              </h2>
-              <button
-                onClick={() => setViewingMedia(null)}
-                className="text-gray-500 hover:text-gray-700 cursor-pointer"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="space-y-3 text-sm">
-              <div>
-                <span className="font-medium text-[#5f686d]">Type:</span>{" "}
-                <span className="text-[#2c3135] capitalize">
-                  {viewingMedia.mediaType?.replace("-", " ")}
-                </span>
-              </div>
-              <div>
-                <span className="font-medium text-[#5f686d]">Category:</span>{" "}
-                <span className="text-[#2c3135]">{viewingMedia.category}</span>
-              </div>
-              <div>
-                <span className="font-medium text-[#5f686d]">URL:</span>{" "}
-                <a
-                  href={viewingMedia.contentUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-[#004f52] hover:underline"
-                >
-                  {viewingMedia.contentUrl}
-                </a>
-              </div>
-              <div>
-                <span className="font-medium text-[#5f686d]">Published:</span>{" "}
-                <span className="text-[#2c3135]">
-                  {viewingMedia.isPublished ? "Yes" : "No"}
-                </span>
-              </div>
-              <div>
-                <span className="font-medium text-[#5f686d]">Featured:</span>{" "}
-                <span className="text-[#2c3135]">
-                  {viewingMedia.isFeatured ? "Yes" : "No"}
-                </span>
-              </div>
-              <div>
-                <span className="font-medium text-[#5f686d] block mb-1">
-                  Description:
-                </span>
-                <div
-                  className="text-[#2c3135] prose prose-sm max-w-none"
-                  dangerouslySetInnerHTML={{ __html: viewingMedia.description }}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+        <MediaDetailsModal
+          media={viewingMedia}
+          onClose={() => setViewingMedia(null)}
+        />
       )}
     </section>
   );
