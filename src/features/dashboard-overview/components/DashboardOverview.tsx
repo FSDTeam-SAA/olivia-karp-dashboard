@@ -132,7 +132,7 @@ export default function DashboardOverview() {
           <Card key={i} className="border border-[#E2E8F0] shadow-sm">
             <CardContent className="p-6">
               <div className="flex flex-col gap-4">
-                <span className="text-[#64748B] text-sm font-medium">
+                <span className="text-[#64748B] text-xl font-semibold">
                   {stat.title}
                 </span>
                 <div className="flex items-end justify-between">

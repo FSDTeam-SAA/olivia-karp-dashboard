@@ -12,6 +12,7 @@ import {
 import { useJobs, useDeleteJob, useUpdateJobStatus } from "../hooks/useJobs";
 import { Job, Meta } from "../types/content.types";
 import JobPostModal from "./JobPostModal";
+import JobDetailsModal from "./JobDetailsModal";
 import DeleteConfirmDialog from "./DeleteConfirmDialog";
 import TableSkeleton from "./TableSkeleton";
 import { toast } from "sonner";
@@ -283,75 +284,8 @@ export default function JobPostPage() {
         isLoading={deleteMutation.isPending}
       />
 
-      {/* View Job Details Dialog */}
       {viewingJob && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-          onClick={() => setViewingJob(null)}
-        >
-          <div
-            className="bg-white rounded-xl max-w-[600px] w-full mx-4 max-h-[80vh] overflow-y-auto p-6"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-[#2c3135]">
-                {viewingJob.title}
-              </h2>
-              <button
-                onClick={() => setViewingJob(null)}
-                className="text-gray-500 hover:text-gray-700 cursor-pointer"
-              >
-                ✕
-              </button>
-            </div>
-            <div className="space-y-3 text-sm">
-              <div>
-                <span className="font-medium text-[#5f686d]">Category:</span>{" "}
-                <span className="text-[#2c3135]">{viewingJob.category}</span>
-              </div>
-              <div>
-                <span className="font-medium text-[#5f686d]">Company:</span>{" "}
-                <span className="text-[#2c3135]">{viewingJob.companyName}</span>
-              </div>
-              <div>
-                <span className="font-medium text-[#5f686d]">Location:</span>{" "}
-                <span className="text-[#2c3135]">{viewingJob.location}</span>
-              </div>
-              <div>
-                <span className="font-medium text-[#5f686d]">Job Type:</span>{" "}
-                <span className="text-[#2c3135] capitalize">
-                  {viewingJob.jobType}
-                </span>
-              </div>
-              <div>
-                <span className="font-medium text-[#5f686d]">Salary:</span>{" "}
-                <span className="text-[#2c3135]">
-                  {viewingJob.salary?.min} - {viewingJob.salary?.max}{" "}
-                  {viewingJob.salary?.currency}/{viewingJob.salary?.period}
-                </span>
-              </div>
-              <div>
-                <span className="font-medium text-[#5f686d]">Deadline:</span>{" "}
-                <span className="text-[#2c3135]">
-                  {new Date(viewingJob.deathLine).toLocaleDateString()}
-                </span>
-              </div>
-              <div>
-                <span className="font-medium text-[#5f686d]">Skills:</span>{" "}
-                <span className="text-[#2c3135]">{viewingJob.skill}</span>
-              </div>
-              <div>
-                <span className="font-medium text-[#5f686d] block mb-1">
-                  Description:
-                </span>
-                <div
-                  className="text-[#2c3135] prose prose-sm max-w-none"
-                  dangerouslySetInnerHTML={{ __html: viewingJob.description }}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+        <JobDetailsModal job={viewingJob} onClose={() => setViewingJob(null)} />
       )}
     </section>
   );
