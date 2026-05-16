@@ -222,12 +222,10 @@ export default function MediaPostModal({
                   Select Category
                 </option>
                 <option value="video">Video</option>
-                <option value="podcast">Podcast</option>
                 <option value="event-recording">Event Recording</option>
                 <option value="expert-interview">Expert Interview</option>
                 <option value="insight">Insight</option>
-                <option value="blog">Blog</option>
-                <option value="resource">Resource</option>
+                <option value="community">Community</option>
               </select>
             </div>
           </div>

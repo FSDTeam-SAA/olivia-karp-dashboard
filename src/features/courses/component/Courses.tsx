@@ -1,8 +1,15 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, Eye, Pencil, Plus } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Eye,
+  Pencil,
+  Plus,
+  Trash2,
+} from "lucide-react";
 import { useState } from "react";
-import { useCourses } from "../hooks/useCourses";
+import { useCourses, useDeleteCourse } from "../hooks/useCourses";
 import { Course, Meta } from "../types/courses.types";
 import { AddCourseModal } from "./AddCourseModal";
 import { ViewCourseModal } from "./ViewCourseModal";
@@ -17,6 +24,13 @@ export default function Courses() {
 
   // We are ignoring type/isApproved for now as they weren't in the demo
   const { data: response, isLoading, isError } = useCourses({ page, limit });
+  const { mutate: deleteCourseMutation } = useDeleteCourse();
+
+  const handleDelete = (id: string) => {
+    if (window.confirm("Are you sure you want to delete this course?")) {
+      deleteCourseMutation(id);
+    }
+  };
 
   const courses: Course[] = response?.data || [];
   const meta: Meta = response?.meta || {
@@ -138,6 +152,12 @@ export default function Courses() {
                           className="transition hover:opacity-70 p-1 cursor-pointer"
                         >
                           <Pencil className="h-4.5 w-4.5" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(course._id)}
+                          className="transition hover:text-red-500 p-1 cursor-pointer"
+                        >
+                          <Trash2 className="h-4.5 w-4.5" />
                         </button>
                       </div>
                     </td>

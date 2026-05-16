@@ -37,3 +37,8 @@ export const updateCourse = async (id: string, data: FormData) => {
   });
   return response.data;
 };
+
+export const deleteCourse = async (id: string) => {
+  const response = await axiosInstance.delete(`/course/${id}`);
+  return response.data;
+};
