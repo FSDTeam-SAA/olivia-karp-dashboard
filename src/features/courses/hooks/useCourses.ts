@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   createCourse,
+  deleteCourse,
   getAllCourses,
   toggleCourse,
   updateCourse,
@@ -45,6 +46,16 @@ export const useUpdateCourse = () => {
   return useMutation({
     mutationFn: (data: { id: string; data: FormData }) =>
       updateCourse(data.id, data.data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["courses"] });
+    },
+  });
+};
+
+export const useDeleteCourse = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteCourse,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["courses"] });
     },
