@@ -2,10 +2,18 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { MapPin, ChevronLeft, ChevronRight, Plus, Check } from "lucide-react";
+import {
+  MapPin,
+  ChevronLeft,
+  ChevronRight,
+  Plus,
+  Check,
+  Upload,
+} from "lucide-react";
 import { MentorCoach, Meta } from "../types/mentor.types";
 import { MentorProfileModal } from "./MentorProfileModal";
 import { AddMentorModal } from "./AddMentorModal";
+import { BulkUploadModal } from "./BulkUploadModal";
 import {
   useMentorsCoaches,
   useApproveMentorCoach,
@@ -132,6 +140,7 @@ export default function MentorsCoaches() {
     null,
   );
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isBulkUploadModalOpen, setIsBulkUploadModalOpen] = useState(false);
 
   const {
     data: response,
@@ -212,8 +221,16 @@ export default function MentorsCoaches() {
             </select>
 
             <button
+              onClick={() => setIsBulkUploadModalOpen(true)}
+              className="inline-flex items-center justify-center gap-2 rounded-[8px] border-2 border-[#004f52] bg-white px-5 py-2.5 text-[14px] font-semibold text-[#004f52] transition hover:bg-[#f4fbfb] cursor-pointer"
+            >
+              <Upload className="h-4 w-4" />
+              Bulk Upload
+            </button>
+
+            <button
               onClick={() => setIsAddModalOpen(true)}
-              className="inline-flex items-center justify-center gap-2 rounded-[8px] bg-[#004f52] px-5 py-2.5 text-[14px] font-semibold text-white transition hover:bg-[#003d40]"
+              className="inline-flex items-center justify-center gap-2 rounded-[8px] bg-[#004f52] px-5 py-2.5 text-[14px] font-semibold text-white transition hover:bg-[#003d40] cursor-pointer"
             >
               <Plus className="h-4 w-4" />
               Add Mentor/Coach
@@ -292,6 +309,10 @@ export default function MentorsCoaches() {
 
       {isAddModalOpen && (
         <AddMentorModal onClose={() => setIsAddModalOpen(false)} />
+      )}
+
+      {isBulkUploadModalOpen && (
+        <BulkUploadModal onClose={() => setIsBulkUploadModalOpen(false)} />
       )}
     </section>
   );

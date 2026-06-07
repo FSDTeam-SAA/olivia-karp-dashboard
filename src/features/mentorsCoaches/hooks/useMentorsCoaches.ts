@@ -5,6 +5,7 @@ import {
   getAllMentorsAndCoaches,
   approveMentorCoach,
   joinMentorCoach,
+  bulkUploadMentorsCoaches,
 } from "../api/mentorsCoaches.api";
 
 export const useMentorsCoaches = (params?: {
@@ -33,6 +34,16 @@ export const useJoinMentorCoach = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: joinMentorCoach,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["mentors-coaches"] });
+    },
+  });
+};
+
+export const useBulkUploadMentorsCoaches = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: bulkUploadMentorsCoaches,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["mentors-coaches"] });
     },
