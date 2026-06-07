@@ -29,3 +29,19 @@ export const joinMentorCoach = async (data: FormData) => {
   });
   return response.data;
 };
+
+// bulk upload mentors or coaches
+export const bulkUploadMentorsCoaches = async (file: File) => {
+  const formData = new FormData();
+  formData.append("file", file);
+  const response = await axiosInstance.post(
+    "/mentors-coaches/bulk-upload",
+    formData,
+    {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    },
+  );
+  return response.data;
+};

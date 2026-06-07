@@ -51,3 +51,13 @@ export type Meta = {
   total: number;
   totalPage: number;
 };
+
+export type BulkUploadResponse = {
+  success: boolean;
+  message: string;
+  data: {
+    createdCount: number;
+    updatedCount: number;
+    errors: string[];
+  };
+};
