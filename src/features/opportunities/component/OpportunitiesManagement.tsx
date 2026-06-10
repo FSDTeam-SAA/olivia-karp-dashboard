@@ -146,6 +146,38 @@ export default function OpportunitiesManagement() {
   const runningCount = allJobs.filter((j) => j.status === "closed").length;
   const totalApply = appliedResponse?.meta?.total ?? 0;
 
+  const getPageNumbers = () => {
+    const totalPages = meta.totalPage || 0;
+    const pages: (number | string)[] = [];
+    const maxVisible = 5;
+
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      pages.push(1);
+
+      if (page > 3) {
+        pages.push("...");
+      }
+
+      const start = Math.max(2, page - 1);
+      const end = Math.min(totalPages - 1, page + 1);
+
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+
+      if (page < totalPages - 2) {
+        pages.push("...");
+      }
+
+      pages.push(totalPages);
+    }
+    return pages;
+  };
+
   const handleDeleteConfirm = useCallback(async () => {
     if (!deletingId) return;
     try {
@@ -380,32 +412,45 @@ export default function OpportunitiesManagement() {
                       <button
                         onClick={() => setPage((p) => Math.max(1, p - 1))}
                         disabled={page === 1}
-                        className="flex h-10 w-10 items-center justify-center rounded border border-[#004242] transition hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex h-10 w-10 items-center justify-center rounded border border-[#004242] transition hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                       >
                         <ChevronLeft className="h-[18px] w-[18px] text-[#004242]" />
                       </button>
-                      <button className="flex h-10 w-10 items-center justify-center rounded bg-[#004242] text-base text-white">
-                        {page}
-                      </button>
-                      {meta.totalPage > 1 && page < meta.totalPage && (
-                        <>
-                          <button className="flex h-10 w-10 items-center justify-center rounded border border-[#004242] text-base text-[#1e1e1e]">
-                            ...
-                          </button>
+
+                      {getPageNumbers().map((pNum, index) => {
+                        if (pNum === "...") {
+                          return (
+                            <span
+                              key={`ellipsis-${index}`}
+                              className="flex w-10 h-10 items-center justify-center text-base text-[#1e1e1e]"
+                            >
+                              ...
+                            </span>
+                          );
+                        }
+
+                        const isActive = pNum === page;
+                        return (
                           <button
-                            onClick={() => setPage(meta.totalPage)}
-                            className="flex h-10 w-10 items-center justify-center rounded border border-[#004242] text-base text-[#1e1e1e] transition hover:bg-white"
+                            key={`page-${pNum}`}
+                            onClick={() => setPage(Number(pNum))}
+                            className={`flex h-10 w-10 items-center justify-center rounded transition cursor-pointer text-base ${
+                              isActive
+                                ? "bg-[#004242] text-white"
+                                : "border border-[#004242] text-[#1e1e1e] hover:bg-white"
+                            }`}
                           >
-                            {meta.totalPage}
+                            {pNum}
                           </button>
-                        </>
-                      )}
+                        );
+                      })}
+
                       <button
                         onClick={() =>
                           setPage((p) => Math.min(meta.totalPage || 1, p + 1))
                         }
                         disabled={page >= (meta.totalPage || 1)}
-                        className="flex h-10 w-10 items-center justify-center rounded border border-[#004242] transition hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex h-10 w-10 items-center justify-center rounded border border-[#004242] transition hover:bg-white disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                       >
                         <ChevronRight className="h-[18px] w-[18px] text-[#004242]" />
                       </button>

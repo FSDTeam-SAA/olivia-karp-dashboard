@@ -47,67 +47,101 @@ function MentorCard({
     item.bio ||
     "Experienced mentor helping professionals improve their skills and leadership.";
 
+  const maxLength = 120;
+  const isLong = shortDescription.length > maxLength;
+  const truncatedDescription = isLong
+    ? shortDescription.slice(0, maxLength).trim() + "..."
+    : shortDescription;
+
+  // Clean and split skills to prevent huge tag bubbles
+  const processedSkills: string[] = [];
+  const rawSkills = item.skills || [];
+  rawSkills.forEach((skill) => {
+    const parts = skill.split(/[\n.,;]+/);
+    parts.forEach((part) => {
+      const trimmed = part.trim();
+      if (trimmed && trimmed.length > 1) {
+        const cleaned =
+          trimmed.length > 25 ? trimmed.slice(0, 22) + "..." : trimmed;
+        processedSkills.push(cleaned);
+      }
+    });
+  });
+
   const tags = [
     ...(item.support?.map((s) => s.title) || []),
-    ...(item.skills?.slice(0, 2) || []),
+    ...processedSkills,
   ].slice(0, 3);
 
   return (
-    <div className="rounded-[10px] border border-[#dde7eb] bg-white p-4 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
-      <div className="flex items-start gap-3">
-        <div className="relative h-[78px] w-[78px] overflow-hidden rounded-[8px]">
-          <Image
-            src={item.image?.url || "/images/profile.png"}
-            alt={fullName}
-            fill
-            className="object-cover"
-          />
-          <span className="absolute bottom-1 right-1 h-3.5 w-3.5 rounded-full border-2 border-white bg-[#31c95f]" />
-        </div>
-
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-[16px] font-semibold leading-none text-[#384148]">
-              {fullName}
-            </h3>
-            <span className="rounded-full bg-[#eef3ff] px-2 py-0.5 text-[10px] text-[#6f8cff] font-bold">
-              {item.type === "mentor" ? "Mentor" : "Coach"}
-            </span>
+    <div className="rounded-[10px] border border-[#dde7eb] bg-white p-4 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[380px]">
+      <div>
+        <div className="flex items-start gap-3">
+          <div className="relative h-[78px] w-[78px] shrink-0 overflow-hidden rounded-[8px]">
+            <Image
+              src={item.image?.url || "/images/profile.png"}
+              alt={fullName}
+              fill
+              className="object-cover"
+            />
+            <span className="absolute bottom-1 right-1 h-3.5 w-3.5 rounded-full border-2 border-white bg-[#31c95f]" />
           </div>
 
-          <p className="mt-1 text-[12px] leading-4 text-[#8a939a]">
-            {item.bio || item.designation || "VP of Product"}
-          </p>
-          <p className="text-[12px] leading-4 text-[#8a939a]">Stripe</p>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <h3 className="text-[16px] font-semibold leading-none text-[#384148] truncate max-w-[150px]">
+                {fullName}
+              </h3>
+              <span className="rounded-full bg-[#eef3ff] px-2 py-0.5 text-[10px] text-[#6f8cff] font-bold shrink-0">
+                {item.type === "mentor" ? "Mentor" : "Coach"}
+              </span>
+            </div>
+
+            <p
+              className="mt-1 text-[12px] leading-4 text-[#8a939a] line-clamp-1"
+              title={item.bio || item.designation}
+            >
+              {item.bio || item.designation || "VP of Product"}
+            </p>
+            <p className="text-[12px] leading-4 text-[#8a939a]">Stripe</p>
+          </div>
         </div>
+
+        <div className="mt-4 flex items-center gap-1.5 text-[12px] text-[#7a99b8]">
+          <MapPin className="h-3.5 w-3.5" />
+          <span>{getRandomLocation()}</span>
+        </div>
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          {tags.map((tag, index) => (
+            <span
+              key={`${tag}-${index}`}
+              className={`rounded-full px-2.5 py-1 text-[10px] ${getBadgeColor(
+                index,
+              )}`}
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+
+        <p className="mt-4 text-[12px] leading-relaxed text-[#676f75]">
+          {truncatedDescription}{" "}
+          {isLong && (
+            <button
+              onClick={() => onViewProfile(item)}
+              className="text-[#004f52] font-semibold hover:underline cursor-pointer ml-1 inline-block"
+            >
+              more
+            </button>
+          )}
+        </p>
       </div>
 
-      <div className="mt-4 flex items-center gap-1.5 text-[12px] text-[#7a99b8]">
-        <MapPin className="h-3.5 w-3.5" />
-        <span>{getRandomLocation()}</span>
-      </div>
-
-      <div className="mt-4 flex flex-wrap gap-2">
-        {tags.map((tag, index) => (
-          <span
-            key={`${tag}-${index}`}
-            className={`rounded-full px-2.5 py-1 text-[10px] ${getBadgeColor(
-              index,
-            )}`}
-          >
-            {tag}
-          </span>
-        ))}
-      </div>
-
-      <p className="mt-4 min-h-[72px] text-[12px] leading-4 text-[#676f75]">
-        {shortDescription}
-      </p>
-
-      <div className="mt-4 flex items-center gap-2">
+      <div className="mt-4 flex items-center gap-2 pt-2 border-t border-[#f0f4f5]">
         <button
           onClick={() => onViewProfile(item)}
-          className="flex-1 rounded-[8px] border-2 border-[#004f52] bg-white px-4 py-2.5 text-[14px] font-semibold text-[#004f52] transition cursor-pointer bg-[#f4fbfb]"
+          className="flex-1 rounded-[8px] border-2 border-[#004f52] bg-white px-4 py-2.5 text-[14px] font-semibold text-[#004f52] transition cursor-pointer bg-[#f4fbfb] hover:bg-[#eaf5f5]"
         >
           View Profile
         </button>
@@ -116,7 +150,7 @@ function MentorCard({
           <button
             onClick={() => approveCoach(item._id)}
             disabled={isPending}
-            className="flex h-[42px] w-[42px] items-center justify-center rounded-[8px] bg-[#31c95f] text-white transition hover:bg-[#24a148] disabled:opacity-50"
+            className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-[8px] bg-[#31c95f] text-white transition hover:bg-[#24a148] disabled:opacity-50 cursor-pointer"
             title="Approve"
           >
             {isPending ? (
@@ -159,6 +193,38 @@ export default function MentorsCoaches() {
     limit: 10,
     total: 0,
     totalPage: 0,
+  };
+
+  const getPageNumbers = () => {
+    const totalPages = meta.totalPage || 0;
+    const pages: (number | string)[] = [];
+    const maxVisible = 5;
+
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      pages.push(1);
+
+      if (page > 3) {
+        pages.push("...");
+      }
+
+      const start = Math.max(2, page - 1);
+      const end = Math.min(totalPages - 1, page + 1);
+
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+
+      if (page < totalPages - 2) {
+        pages.push("...");
+      }
+
+      pages.push(totalPages);
+    }
+    return pages;
   };
 
   if (isLoading) {
@@ -273,30 +339,57 @@ export default function MentorsCoaches() {
 
         <div className="mt-6 flex flex-col gap-4 rounded-[8px] bg-[#eef3f4] px-4 py-5 md:flex-row md:items-center md:justify-between md:px-8">
           <p className="text-[14px] text-[#5f686d]">
-            Showing 1 to 10 of {meta.total} results
+            Showing {meta.total === 0 ? 0 : (page - 1) * limit + 1} to{" "}
+            {Math.min(page * limit, meta.total)} of {meta.total} results
           </p>
 
-          <div className="flex items-center gap-2">
-            <button
-              className="flex h-[34px] w-[34px] items-center justify-center rounded-[4px] border border-[#7f9da0] text-[#5b6e70] disabled:opacity-50 disabled:cursor-not-allowed"
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={page <= 1}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
+          {meta.totalPage > 0 && (
+            <div className="flex items-center gap-2">
+              <button
+                className="flex h-[34px] w-[34px] items-center justify-center rounded-[4px] border border-[#7f9da0] bg-white text-[#5b6e70] transition hover:bg-[#f4fbfb] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page <= 1}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </button>
 
-            <button className="flex h-[34px] min-w-[34px] items-center justify-center rounded-[4px] bg-[#004f52] px-3 text-white">
-              {page}
-            </button>
+              {getPageNumbers().map((pNum, index) => {
+                if (pNum === "...") {
+                  return (
+                    <span
+                      key={`ellipsis-${index}`}
+                      className="flex h-[34px] w-[34px] items-center justify-center text-[#5b6e70]"
+                    >
+                      ...
+                    </span>
+                  );
+                }
 
-            <button
-              className="flex h-[34px] min-w-[34px] items-center justify-center rounded-[4px] border border-[#7f9da0] bg-white px-3 text-[#5b6e70] disabled:opacity-50 disabled:cursor-not-allowed"
-              onClick={() => setPage((p) => p + 1)}
-              disabled={page >= meta.totalPage}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </div>
+                const isActive = pNum === page;
+                return (
+                  <button
+                    key={`page-${pNum}`}
+                    onClick={() => setPage(Number(pNum))}
+                    className={`flex h-[34px] min-w-[34px] items-center justify-center rounded-[4px] px-3 text-[14px] font-medium transition cursor-pointer ${
+                      isActive
+                        ? "bg-[#004f52] text-white"
+                        : "border border-[#7f9da0] bg-white text-[#5b6e70] hover:bg-[#f4fbfb]"
+                    }`}
+                  >
+                    {pNum}
+                  </button>
+                );
+              })}
+
+              <button
+                className="flex h-[34px] w-[34px] items-center justify-center rounded-[4px] border border-[#7f9da0] bg-white text-[#5b6e70] transition hover:bg-[#f4fbfb] disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                onClick={() => setPage((p) => p + 1)}
+                disabled={page >= meta.totalPage}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
