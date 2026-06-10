@@ -61,6 +61,37 @@ export default function UserDataManagement() {
 
   const totalPages = meta?.totalPage || 1;
 
+  const getPageNumbers = () => {
+    const pages: (number | string)[] = [];
+    const maxVisible = 5;
+
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      pages.push(1);
+
+      if (page > 3) {
+        pages.push("...");
+      }
+
+      const start = Math.max(2, page - 1);
+      const end = Math.min(totalPages - 1, page + 1);
+
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+
+      if (page < totalPages - 2) {
+        pages.push("...");
+      }
+
+      pages.push(totalPages);
+    }
+    return pages;
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -178,30 +209,43 @@ export default function UserDataManagement() {
                 <button
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={page <= 1}
-                  className="w-10 h-10 border border-[#004242] rounded flex items-center justify-center disabled:opacity-50 hover:bg-white transition-colors"
+                  className="w-10 h-10 border border-[#004242] rounded flex items-center justify-center disabled:opacity-50 hover:bg-white transition-colors cursor-pointer"
                 >
                   <ChevronLeft className="h-[18px] w-[18px] text-[#004242]" />
                 </button>
-                <button className="w-10 h-10 bg-[#004242] text-white rounded flex items-center justify-center text-base">
-                  {page}
-                </button>
-                {totalPages > 2 && page < totalPages - 1 && (
-                  <button className="w-10 h-10 border border-[#004242] rounded flex items-center justify-center text-base text-[#1e1e1e]">
-                    ...
-                  </button>
-                )}
-                {totalPages > 1 && page !== totalPages && (
-                  <button
-                    onClick={() => setPage(totalPages)}
-                    className="w-10 h-10 border border-[#004242] rounded flex items-center justify-center text-base text-[#1e1e1e] hover:bg-white transition-colors"
-                  >
-                    {totalPages}
-                  </button>
-                )}
+
+                {getPageNumbers().map((pNum, index) => {
+                  if (pNum === "...") {
+                    return (
+                      <span
+                        key={`ellipsis-${index}`}
+                        className="flex w-10 h-10 items-center justify-center text-base text-[#1e1e1e]"
+                      >
+                        ...
+                      </span>
+                    );
+                  }
+
+                  const isActive = pNum === page;
+                  return (
+                    <button
+                      key={`page-${pNum}`}
+                      onClick={() => setPage(Number(pNum))}
+                      className={`w-10 h-10 rounded flex items-center justify-center text-base transition cursor-pointer ${
+                        isActive
+                          ? "bg-[#004242] text-white"
+                          : "border border-[#004242] text-[#1e1e1e] hover:bg-white"
+                      }`}
+                    >
+                      {pNum}
+                    </button>
+                  );
+                })}
+
                 <button
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={page >= totalPages}
-                  className="w-10 h-10 border border-[#004242] rounded flex items-center justify-center disabled:opacity-50 hover:bg-white transition-colors"
+                  className="w-10 h-10 border border-[#004242] rounded flex items-center justify-center disabled:opacity-50 hover:bg-white transition-colors cursor-pointer"
                 >
                   <ChevronRight className="h-[18px] w-[18px] text-[#004242]" />
                 </button>

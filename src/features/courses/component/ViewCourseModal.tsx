@@ -135,7 +135,7 @@ export function ViewCourseModal({ course, onClose }: ViewCourseModalProps) {
         </div>
 
         {/* Footer */}
-        <div className="mt-6 flex justify-end items-center gap-2">
+        {/* <div className="mt-6 flex justify-end items-center gap-2">
           <span className="text-sm text-gray-600">
             {isOn ? "Available" : "Unavailable"}
           </span>
@@ -151,7 +151,7 @@ export function ViewCourseModal({ course, onClose }: ViewCourseModalProps) {
               <ToggleLeft className="h-8 w-8 text-gray-400 cursor-pointer" />
             )}
           </button>
-        </div>
+        </div> */}
       </div>
 
       {/* Video Player Modal */}

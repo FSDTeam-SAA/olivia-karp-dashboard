@@ -24,7 +24,14 @@ export type Course = {
     url?: string;
     public_id?: string;
   };
+  instructorName?: string;
+  instructorBio?: string;
+  instructorImage?: {
+    url?: string;
+    public_id?: string;
+  };
   price: number;
+  courseBoxUrl?: string;
   category: string;
   createdAt: string;
   updatedAt: string;
