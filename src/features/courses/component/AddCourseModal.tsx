@@ -230,13 +230,13 @@ export function AddCourseModal({ onClose }: AddCourseModalProps) {
                 <div>
                   <label className="block">
                     <span className="mb-1 block text-sm font-medium text-[#4a5559]">
-                      Course Box URL
+                      Course
                     </span>
                     <input
                       type="url"
                       {...register("courseBoxUrl")}
                       className="w-full rounded-lg border border-[#d6dddd] px-4 py-2 text-sm focus:border-[#004f52] focus:outline-none focus:ring-1 focus:ring-[#004f52]"
-                      placeholder="https://example.com/course-box"
+                      placeholder="https://example.com/course"
                     />
                   </label>
                 </div>
