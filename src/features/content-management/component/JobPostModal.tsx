@@ -32,6 +32,7 @@ interface FormState {
   skill: string;
   companyName: string;
   companyURL: string;
+  applyUrl: string;
   deathLine: string;
   salaryMin: string;
   salaryMax: string;
@@ -54,6 +55,7 @@ const initialState: FormState = {
   skill: "",
   companyName: "",
   companyURL: "",
+  applyUrl: "",
   deathLine: "",
   salaryMin: "",
   salaryMax: "",
@@ -103,6 +105,7 @@ export default function JobPostModal({
     skill,
     companyName,
     companyURL,
+    applyUrl,
     deathLine,
     salaryMin,
     salaryMax,
@@ -130,6 +133,7 @@ export default function JobPostModal({
             skill: editData.skill || "",
             companyName: editData.companyName || "",
             companyURL: editData.companyURL || "",
+            applyUrl: editData.applyUrl || "",
             deathLine: editData.deathLine
               ? new Date(editData.deathLine).toISOString().split("T")[0]
               : "",
@@ -168,6 +172,7 @@ export default function JobPostModal({
     formData.append("skill", skill);
     formData.append("companyName", companyName);
     formData.append("companyURL", companyURL);
+    formData.append("applyUrl", applyUrl);
     formData.append("deathLine", deathLine);
     formData.append("salary[min]", salaryMin);
     formData.append("salary[max]", salaryMax);
@@ -227,7 +232,7 @@ export default function JobPostModal({
             </div>
             <div className="space-y-1.5">
               <Label>Category</Label>
-              <Input
+              <select
                 value={category}
                 onChange={(e) =>
                   dispatch({
@@ -235,9 +240,32 @@ export default function JobPostModal({
                     payload: { category: e.target.value },
                   })
                 }
-                placeholder="e.g. Software Development"
+                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none focus:ring-1 focus:ring-ring"
                 required
-              />
+              >
+                <option value="" disabled>
+                  Select Category
+                </option>
+                <option value="Jobs">Jobs</option>
+                <option value="Fellowships">Fellowships</option>
+                <option value="Events">Events</option>
+                <option value="Resources">Resources</option>
+                <option value="Courses">Courses</option>
+                <option value="Grants & Fundraising">
+                  Grants & Fundraising
+                </option>
+                {category &&
+                  ![
+                    "Jobs",
+                    "Fellowships",
+                    "Events",
+                    "Resources",
+                    "Courses",
+                    "Grants & Fundraising",
+                  ].includes(category) && (
+                    <option value={category}>{category}</option>
+                  )}
+              </select>
             </div>
           </div>
 
@@ -378,19 +406,34 @@ export default function JobPostModal({
             </div>
           </div>
 
-          <div className="space-y-1.5">
-            <Label>Deadline</Label>
-            <Input
-              type="date"
-              value={deathLine}
-              onChange={(e) =>
-                dispatch({
-                  type: "UPDATE_FIELD",
-                  payload: { deathLine: e.target.value },
-                })
-              }
-              required
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <Label>Deadline</Label>
+              <Input
+                type="date"
+                value={deathLine}
+                onChange={(e) =>
+                  dispatch({
+                    type: "UPDATE_FIELD",
+                    payload: { deathLine: e.target.value },
+                  })
+                }
+                required
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Apply URL</Label>
+              <Input
+                value={applyUrl}
+                onChange={(e) =>
+                  dispatch({
+                    type: "UPDATE_FIELD",
+                    payload: { applyUrl: e.target.value },
+                  })
+                }
+                placeholder="e.g. https://careers.tech.com/apply"
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-4 gap-4">

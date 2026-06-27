@@ -33,6 +33,7 @@ export interface Job {
   skill: string;
   companyName: string;
   companyURL: string;
+  applyUrl?: string;
   companyLogo: CloudinaryFile;
   media: {
     images: CloudinaryFile[];

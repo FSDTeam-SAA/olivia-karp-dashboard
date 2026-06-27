@@ -213,6 +213,24 @@ export default function JobDetailsModal({
                 label="Full Range"
                 value={`${job.salary?.currency}${job.salary?.min?.toLocaleString()} - ${job.salary?.max?.toLocaleString()}`}
               />
+              <DetailRow
+                icon={<Link2 size={16} />}
+                label="Apply Link"
+                value={
+                  job.applyUrl ? (
+                    <a
+                      href={job.applyUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                    >
+                      Apply URL <Link2 size={12} />
+                    </a>
+                  ) : (
+                    "Not listed"
+                  )
+                }
+              />
             </div>
           </section>
 
