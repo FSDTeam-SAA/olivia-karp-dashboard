@@ -525,7 +525,7 @@ export default function JobPostModal({
                 }
               />
             </div>
-            <div className="space-y-1.5">
+            {/* <div className="space-y-1.5">
               <Label>Video</Label>
               <Input
                 type="file"
@@ -537,7 +537,7 @@ export default function JobPostModal({
                   })
                 }
               />
-            </div>
+            </div> */}
           </div>
 
           <div className="flex justify-end gap-3 pt-4">
