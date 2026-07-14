@@ -43,6 +43,14 @@ const initialState: FormState = {
   profileImage: null,
 };
 
+const BLOG_CATEGORIES = [
+  "Expert Insights",
+  "Climate Careers",
+  "Research",
+  "Toolkit",
+  "Community",
+] as const;
+
 type FormAction = {
   type: "SET_FORM" | "UPDATE_FIELD";
   payload: Partial<FormState>;
@@ -175,7 +183,7 @@ export default function BlogPostModal({
             </div>
             <div className="space-y-1.5">
               <Label>Category</Label>
-              <Input
+              <select
                 value={category}
                 onChange={(e) =>
                   dispatch({
@@ -183,9 +191,22 @@ export default function BlogPostModal({
                     payload: { category: e.target.value },
                   })
                 }
-                placeholder="e.g. Renewable Energy"
+                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs outline-none focus:ring-1 focus:ring-ring"
                 required
-              />
+              >
+                <option value="" disabled>
+                  Select Category
+                </option>
+                {BLOG_CATEGORIES.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
+                {category &&
+                  !BLOG_CATEGORIES.includes(
+                    category as (typeof BLOG_CATEGORIES)[number],
+                  ) && <option value={category}>{category}</option>}
+              </select>
             </div>
           </div>
 
