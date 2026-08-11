@@ -225,7 +225,7 @@ export default function MediaPostModal({
                 <option value="event-recording">Event Recording</option>
                 <option value="expert-interview">Expert Interview</option>
                 <option value="insight">Insight</option>
-                <option value="community">Community</option>
+                <option value="Community">Community</option>
               </select>
             </div>
           </div>
