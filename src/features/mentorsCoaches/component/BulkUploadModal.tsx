@@ -104,9 +104,9 @@ export function BulkUploadModal({ onClose }: BulkUploadModalProps) {
   // Helper to trigger download of a template CSV
   const downloadTemplate = () => {
     const csvContent =
-      "firstName,lastName,email,phone,bio,about,type,experienceYears,availability,linkedin,website,isPaidSession,hourlyRate,bookingLink,motivation,goal\n" +
-      "John,Doe,john.doe@example.com,+1234567890,Senior Developer & Mentor,I love mentoring developers,mentor,8,Mon-Fri 6PM-9PM,https://linkedin.com/in/johndoe,https://johndoe.com,true,50,https://calendly.com/johndoe,To give back,Help others grow\n" +
-      "Jane,Smith,jane.smith@example.com,+1987654321,Leadership & Career Coach,Helping professionals lead teams,coach,12,Weekends 9AM-12PM,https://linkedin.com/in/janesmith,https://janesmith.com,false,0,https://calendly.com/janesmith,To share leadership insights,Empower women in tech";
+      "firstName,lastName,email,phone,bio,about,type,roleFunction,industry,experienceYears,availability,linkedin,website,isPaidSession,hourlyRate,bookingLink,motivation,goal\n" +
+      "John,Doe,john.doe@example.com,+1234567890,Senior Developer & Mentor,I love mentoring developers,mentor,Software Engineer,Technology,8,Mon-Fri 6PM-9PM,https://linkedin.com/in/johndoe,https://johndoe.com,true,50,https://calendly.com/johndoe,To give back,Help others grow\n" +
+      "Jane,Smith,jane.smith@example.com,+1987654321,Leadership & Career Coach,Helping professionals lead teams,coach,Product Manager,Finance,12,Weekends 9AM-12PM,https://linkedin.com/in/janesmith,https://janesmith.com,false,0,https://calendly.com/janesmith,To share leadership insights,Empower women in tech";
 
     const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);

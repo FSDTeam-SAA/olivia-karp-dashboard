@@ -60,6 +60,16 @@ export function MentorProfileModal({
                   <span className="rounded-md border border-blue-100 bg-blue-50 px-2.5 py-0.5 text-[10px] font-bold text-blue-600 uppercase tracking-widest">
                     {mentor.type}
                   </span>
+                  {mentor.roleFunction && (
+                    <span className="rounded-md border border-purple-100 bg-purple-50 px-2.5 py-0.5 text-[10px] font-bold text-purple-600 uppercase tracking-widest">
+                      {mentor.roleFunction}
+                    </span>
+                  )}
+                  {mentor.industry && (
+                    <span className="rounded-md border border-amber-100 bg-amber-50 px-2.5 py-0.5 text-[10px] font-bold text-amber-700 uppercase tracking-widest">
+                      {mentor.industry}
+                    </span>
+                  )}
                   {mentor.isApproved && (
                     <span className="rounded-md border border-emerald-100 bg-emerald-50 px-2.5 py-0.5 text-[10px] font-bold text-emerald-600 uppercase tracking-widest">
                       Verified

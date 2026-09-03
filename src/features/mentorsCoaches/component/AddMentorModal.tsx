@@ -15,6 +15,8 @@ type FormValues = {
   bio: string;
   about: string;
   type: "mentor" | "coach";
+  roleFunction: string;
+  industry: string;
   experienceYears: number;
   availability: string;
   linkedin: string;
@@ -80,6 +82,8 @@ export function AddMentorModal({ onClose }: AddMentorModalProps) {
       "bio",
       "about",
       "type",
+      "roleFunction",
+      "industry",
       "experienceYears",
       "availability",
       "linkedin",
@@ -214,6 +218,29 @@ export function AddMentorModal({ onClose }: AddMentorModalProps) {
                     {...register("phone")}
                     className="w-full rounded-lg border border-[#d6dddd] px-4 py-2 text-sm focus:border-[#004f52] focus:outline-none focus:ring-1 focus:ring-[#004f52]"
                     placeholder="+1 234 567 8900"
+                  />
+                </label>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 mt-4">
+                <label className="block col-span-1">
+                  <span className="mb-1 block text-sm font-medium text-[#4a5559]">
+                    Role/function
+                  </span>
+                  <input
+                    {...register("roleFunction")}
+                    className="w-full rounded-lg border border-[#d6dddd] px-4 py-2 text-sm focus:border-[#004f52] focus:outline-none focus:ring-1 focus:ring-[#004f52]"
+                    placeholder="e.g. Software Engineer"
+                  />
+                </label>
+                <label className="block col-span-1">
+                  <span className="mb-1 block text-sm font-medium text-[#4a5559]">
+                    Industry
+                  </span>
+                  <input
+                    {...register("industry")}
+                    className="w-full rounded-lg border border-[#d6dddd] px-4 py-2 text-sm focus:border-[#004f52] focus:outline-none focus:ring-1 focus:ring-[#004f52]"
+                    placeholder="e.g. Technology"
                   />
                 </label>
               </div>

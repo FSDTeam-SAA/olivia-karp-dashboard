@@ -21,6 +21,8 @@ export type MentorCoach = {
   about?: string;
   type: "mentor" | "coach";
   designation?: string;
+  roleFunction?: string;
+  industry?: string;
   skills?: string[];
   support?: SupportItem[];
   experience?: ExperienceItem[];
