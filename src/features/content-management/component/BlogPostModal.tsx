@@ -48,7 +48,7 @@ const BLOG_CATEGORIES = [
   "Climate Careers",
   "Research",
   "Toolkit",
-  "Renewable Energy",
+  "Community",
 ] as const;
 
 type FormAction = {
