@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import {
   Bell,
   Briefcase,
+  Building2,
   ChevronRight,
   GraduationCap,
   LayoutDashboard,
@@ -58,6 +59,11 @@ const menuItems = [
     title: "Courses",
     icon: GraduationCap,
     href: "/courses",
+  },
+  {
+    title: "Education Partners",
+    icon: Building2,
+    href: "/education-partners",
   },
   {
     title: "Reviews",
