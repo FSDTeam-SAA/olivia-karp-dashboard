@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils";
 import {
   Bell,
+  BookOpen,
   Briefcase,
   Building2,
   ChevronRight,
@@ -64,6 +65,11 @@ const menuItems = [
     title: "Education Partners",
     icon: Building2,
     href: "/education-partners",
+  },
+  {
+    title: "Partner Courses",
+    icon: BookOpen,
+    href: "/education-partner-courses",
   },
   {
     title: "Reviews",
