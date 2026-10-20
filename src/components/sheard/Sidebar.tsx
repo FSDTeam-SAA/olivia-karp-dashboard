@@ -7,6 +7,7 @@ import {
   Briefcase,
   Building2,
   ChevronRight,
+  ClipboardCheck,
   GraduationCap,
   LayoutDashboard,
   LogOut,
@@ -50,6 +51,11 @@ const menuItems = [
     title: "Opportunities Management",
     icon: Briefcase,
     href: "/opportunities",
+  },
+  {
+    title: "Opportunity Submissions",
+    icon: ClipboardCheck,
+    href: "/submitted-opportunities",
   },
   {
     title: "Mentor & Coaches",
