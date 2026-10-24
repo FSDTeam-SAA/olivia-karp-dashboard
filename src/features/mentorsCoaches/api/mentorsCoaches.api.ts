@@ -10,13 +10,35 @@ export const getAllMentorsAndCoaches = async (params?: {
   type?: string;
   isApproved?: boolean;
 }) => {
-  const response = await axiosInstance.get("/mentors-coaches", { params });
+  const response = await axiosInstance.get("/mentors-coaches/all", { params });
   return response.data;
 };
 
-// approve mentor or coach
-export const approveMentorCoach = async (id: string) => {
-  const response = await axiosInstance.put(`/mentors-coaches/approved/${id}`);
+// approve mentor or coach with email visibility control
+export const approveMentorCoach = async (
+  payload: string | { id: string; isEmailPublic?: boolean },
+) => {
+  const id = typeof payload === "string" ? payload : payload.id;
+  const isEmailPublic =
+    typeof payload === "object" ? payload.isEmailPublic : undefined;
+  const response = await axiosInstance.put(`/mentors-coaches/approved/${id}`, {
+    isEmailPublic,
+  });
+  return response.data;
+};
+
+// toggle public email visibility
+export const toggleMentorEmailVisibility = async ({
+  id,
+  isEmailPublic,
+}: {
+  id: string;
+  isEmailPublic: boolean;
+}) => {
+  const response = await axiosInstance.patch(
+    `/mentors-coaches/email-visibility/${id}`,
+    { isEmailPublic },
+  );
   return response.data;
 };
 

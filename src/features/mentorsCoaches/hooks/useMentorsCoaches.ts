@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getAllMentorsAndCoaches,
   approveMentorCoach,
+  toggleMentorEmailVisibility,
   joinMentorCoach,
   bulkUploadMentorsCoaches,
 } from "../api/mentorsCoaches.api";
@@ -24,6 +25,16 @@ export const useApproveMentorCoach = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: approveMentorCoach,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["mentors-coaches"] });
+    },
+  });
+};
+
+export const useToggleMentorEmailVisibility = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: toggleMentorEmailVisibility,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["mentors-coaches"] });
     },

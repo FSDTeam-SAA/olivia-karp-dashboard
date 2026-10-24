@@ -41,6 +41,7 @@ export type MentorCoach = {
   };
   isApproved: boolean;
   isActive: boolean;
+  isEmailPublic?: boolean;
   totalSessions?: number;
   createdAt?: string;
   updatedAt?: string;

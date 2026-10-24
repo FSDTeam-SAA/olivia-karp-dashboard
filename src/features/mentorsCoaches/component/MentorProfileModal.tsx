@@ -1,28 +1,57 @@
 "use client";
 
+import { useState } from "react";
 import {
   Briefcase,
   DollarSign,
   Globe,
-  Languages,
   Linkedin,
   Mail,
   MapPin,
-  Phone,
   X,
+  Check,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import Image from "next/image";
 import { MentorCoach } from "../types/mentor.types";
+import { useToggleMentorEmailVisibility } from "../hooks/useMentorsCoaches";
 
 interface MentorProfileModalProps {
   mentor: MentorCoach;
   onClose: () => void;
+  onApproveClick?: (mentor: MentorCoach) => void;
 }
 
 export function MentorProfileModal({
   mentor,
   onClose,
+  onApproveClick,
 }: MentorProfileModalProps) {
+  const [overrideEmailPublic, setOverrideEmailPublic] = useState<
+    boolean | null
+  >(null);
+  const currentEmailPublic =
+    overrideEmailPublic !== null
+      ? overrideEmailPublic
+      : Boolean(mentor.isEmailPublic);
+
+  const { mutate: toggleEmailVisibility, isPending: isTogglingEmail } =
+    useToggleMentorEmailVisibility();
+
+  const handleToggleEmailVisibility = () => {
+    const nextVal = !currentEmailPublic;
+    setOverrideEmailPublic(nextVal);
+    toggleEmailVisibility(
+      { id: mentor._id, isEmailPublic: nextVal },
+      {
+        onError: () => {
+          setOverrideEmailPublic(Boolean(mentor.isEmailPublic));
+        },
+      },
+    );
+  };
+
   const fullName = `${mentor.firstName} ${mentor.lastName}`;
 
   return (
@@ -110,10 +139,6 @@ export function MentorProfileModal({
                     icon: <Mail size={18} />,
                     href: mentor.email ? `mailto:${mentor.email}` : null,
                   },
-                  {
-                    icon: <Phone size={18} />,
-                    href: mentor.phone ? `tel:${mentor.phone}` : null,
-                  },
                   { icon: <Globe size={18} />, href: mentor.website },
                   { icon: <Linkedin size={18} />, href: mentor.linkedin },
                 ].map(
@@ -130,6 +155,56 @@ export function MentorProfileModal({
                       </a>
                     ),
                 )}
+              </div>
+
+              {/* Admin Control: Email Visibility */}
+              <div className="mt-4 flex items-center justify-between gap-3 p-3.5 bg-slate-50 border border-slate-200 rounded-xl">
+                <div className="flex items-center gap-2.5">
+                  <div
+                    className={`p-1.5 rounded-lg shrink-0 ${
+                      currentEmailPublic
+                        ? "bg-emerald-100 text-emerald-700"
+                        : "bg-slate-200 text-slate-600"
+                    }`}
+                  >
+                    {currentEmailPublic ? (
+                      <Eye size={16} />
+                    ) : (
+                      <EyeOff size={16} />
+                    )}
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-slate-800">
+                      Public Email:{" "}
+                      {currentEmailPublic ? (
+                        <span className="text-emerald-700">Visible</span>
+                      ) : (
+                        <span className="text-slate-600">Hidden</span>
+                      )}
+                    </p>
+                    <p className="text-[11px] text-slate-500">
+                      {currentEmailPublic
+                        ? "Email address is visible on the public website profile."
+                        : "Email address is kept private and hidden from public visitors."}
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={handleToggleEmailVisibility}
+                  disabled={isTogglingEmail}
+                  className={`px-3 py-1.5 text-xs font-bold rounded-lg border transition shrink-0 cursor-pointer ${
+                    currentEmailPublic
+                      ? "bg-white text-slate-700 border-slate-300 hover:bg-slate-100"
+                      : "bg-emerald-600 text-white border-emerald-600 hover:bg-emerald-700"
+                  }`}
+                >
+                  {isTogglingEmail
+                    ? "Updating..."
+                    : currentEmailPublic
+                      ? "Hide Email"
+                      : "Make Public"}
+                </button>
               </div>
             </div>
           </div>
@@ -254,7 +329,22 @@ export function MentorProfileModal({
         </div>
 
         {/* Footer */}
-        <div className="px-8 py-5 border-t border-slate-100 bg-slate-50/50 flex justify-end">
+        <div className="px-8 py-5 border-t border-slate-100 bg-slate-50/50 flex justify-between items-center">
+          <div>
+            {!mentor.isApproved && onApproveClick && (
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onApproveClick(mentor);
+                }}
+                className="px-5 py-2.5 text-sm font-bold text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 transition cursor-pointer flex items-center gap-2"
+              >
+                <Check size={16} />
+                Approve Application
+              </button>
+            )}
+          </div>
           <button
             onClick={onClose}
             className="px-8 py-2.5 text-sm font-bold text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors cursor-pointer"

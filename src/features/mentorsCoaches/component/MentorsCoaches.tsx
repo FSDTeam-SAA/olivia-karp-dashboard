@@ -14,6 +14,7 @@ import { MentorCoach, Meta } from "../types/mentor.types";
 import { MentorProfileModal } from "./MentorProfileModal";
 import { AddMentorModal } from "./AddMentorModal";
 import { BulkUploadModal } from "./BulkUploadModal";
+import { ApproveMentorModal } from "./ApproveMentorModal";
 import {
   useMentorsCoaches,
   useApproveMentorCoach,
@@ -36,11 +37,12 @@ function getBadgeColor(index: number) {
 function MentorCard({
   item,
   onViewProfile,
+  onApproveClick,
 }: {
   item: MentorCoach;
   onViewProfile: (item: MentorCoach) => void;
+  onApproveClick: (item: MentorCoach) => void;
 }) {
-  const { mutate: approveCoach, isPending } = useApproveMentorCoach();
   const fullName = `${item.firstName} ${item.lastName}`;
   const shortDescription =
     item.about ||
@@ -95,6 +97,22 @@ function MentorCard({
               <span className="rounded-full bg-[#eef3ff] px-2 py-0.5 text-[10px] text-[#6f8cff] font-bold shrink-0">
                 {item.type === "mentor" ? "Mentor" : "Coach"}
               </span>
+              {item.isApproved && (
+                <span
+                  className={`rounded-full px-2 py-0.5 text-[9px] font-bold shrink-0 ${
+                    item.isEmailPublic
+                      ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                      : "bg-slate-100 text-slate-600 border border-slate-200"
+                  }`}
+                  title={
+                    item.isEmailPublic
+                      ? "Email is publicly visible on profile"
+                      : "Email is kept private on profile"
+                  }
+                >
+                  {item.isEmailPublic ? "Email: Public" : "Email: Hidden"}
+                </span>
+              )}
             </div>
 
             <p
@@ -148,16 +166,11 @@ function MentorCard({
 
         {!item.isApproved && (
           <button
-            onClick={() => approveCoach(item._id)}
-            disabled={isPending}
-            className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-[8px] bg-[#31c95f] text-white transition hover:bg-[#24a148] disabled:opacity-50 cursor-pointer"
-            title="Approve"
+            onClick={() => onApproveClick(item)}
+            className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-[8px] bg-[#31c95f] text-white transition hover:bg-[#24a148] cursor-pointer"
+            title="Review & Approve Application"
           >
-            {isPending ? (
-              <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
-            ) : (
-              <Check className="h-4 w-4" />
-            )}
+            <Check className="h-4 w-4" />
           </button>
         )}
       </div>
@@ -173,8 +186,14 @@ export default function MentorsCoaches() {
   const [selectedMentor, setSelectedMentor] = useState<MentorCoach | null>(
     null,
   );
+  const [mentorToApprove, setMentorToApprove] = useState<MentorCoach | null>(
+    null,
+  );
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isBulkUploadModalOpen, setIsBulkUploadModalOpen] = useState(false);
+
+  const { mutate: approveCoach, isPending: isApproving } =
+    useApproveMentorCoach();
 
   const {
     data: response,
@@ -333,6 +352,7 @@ export default function MentorsCoaches() {
               key={item._id}
               item={item}
               onViewProfile={setSelectedMentor}
+              onApproveClick={setMentorToApprove}
             />
           ))}
         </div>
@@ -397,6 +417,35 @@ export default function MentorsCoaches() {
         <MentorProfileModal
           mentor={selectedMentor}
           onClose={() => setSelectedMentor(null)}
+          onApproveClick={(m) => {
+            setMentorToApprove(m);
+          }}
+        />
+      )}
+
+      {mentorToApprove && (
+        <ApproveMentorModal
+          mentor={mentorToApprove}
+          isOpen={!!mentorToApprove}
+          onClose={() => setMentorToApprove(null)}
+          onConfirm={(id, isEmailPublic) => {
+            approveCoach(
+              { id, isEmailPublic },
+              {
+                onSuccess: () => {
+                  setMentorToApprove(null);
+                  if (selectedMentor && selectedMentor._id === id) {
+                    setSelectedMentor((prev) =>
+                      prev
+                        ? { ...prev, isApproved: true, isEmailPublic }
+                        : null,
+                    );
+                  }
+                },
+              },
+            );
+          }}
+          isPending={isApproving}
         />
       )}
 

@@ -11,7 +11,6 @@ type FormValues = {
   firstName: string;
   lastName: string;
   email: string;
-  phone: string;
   bio: string;
   about: string;
   type: "mentor" | "coach";
@@ -30,6 +29,7 @@ type FormValues = {
   bookingLink: string;
   motivation: string;
   goal: string;
+  isEmailPublic: boolean;
 };
 
 export function AddMentorModal({ onClose }: AddMentorModalProps) {
@@ -40,6 +40,7 @@ export function AddMentorModal({ onClose }: AddMentorModalProps) {
     defaultValues: {
       type: "mentor",
       isPaidSession: true,
+      isEmailPublic: false,
       languages: [{ value: "" }],
       skills: [{ value: "" }],
       support: [{ title: "", description: "" }],
@@ -78,7 +79,6 @@ export function AddMentorModal({ onClose }: AddMentorModalProps) {
       "firstName",
       "lastName",
       "email",
-      "phone",
       "bio",
       "about",
       "type",
@@ -98,6 +98,7 @@ export function AddMentorModal({ onClose }: AddMentorModalProps) {
       if (val) formData.append(key, String(val));
     });
 
+    formData.append("isEmailPublic", data.isEmailPublic ? "true" : "false");
     formData.append("isPaidSession", data.isPaidSession ? "true" : "false");
 
     if (data.isPaidSession && data.hourlyRate) {
@@ -199,7 +200,7 @@ export function AddMentorModal({ onClose }: AddMentorModalProps) {
                 </label>
               </div>
               <div className="grid grid-cols-2 gap-4 mt-4">
-                <label className="block col-span-1">
+                <label className="block col-span-2">
                   <span className="mb-1 block text-sm font-medium text-[#4a5559]">
                     Email <span className="text-red-500">*</span>
                   </span>
@@ -210,16 +211,22 @@ export function AddMentorModal({ onClose }: AddMentorModalProps) {
                     placeholder="john@example.com"
                   />
                 </label>
-                <label className="block col-span-1">
-                  <span className="mb-1 block text-sm font-medium text-[#4a5559]">
-                    Phone
-                  </span>
+
+                <div className="col-span-2 flex items-center gap-2 pt-1">
                   <input
-                    {...register("phone")}
-                    className="w-full rounded-lg border border-[#d6dddd] px-4 py-2 text-sm focus:border-[#004f52] focus:outline-none focus:ring-1 focus:ring-[#004f52]"
-                    placeholder="+1 234 567 8900"
+                    type="checkbox"
+                    id="isEmailPublic"
+                    {...register("isEmailPublic")}
+                    className="h-4 w-4 rounded border-gray-300 text-[#004f52] focus:ring-[#004f52]"
                   />
-                </label>
+                  <label
+                    htmlFor="isEmailPublic"
+                    className="text-xs text-[#526063] cursor-pointer"
+                  >
+                    Show this email address publicly on mentor&apos;s profile
+                    (Default: Private/Hidden)
+                  </label>
+                </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4 mt-4">
@@ -586,13 +593,18 @@ export function AddMentorModal({ onClose }: AddMentorModalProps) {
 
                 <label className="block mt-4">
                   <span className="mb-1 block text-sm font-medium text-[#4a5559]">
-                    Booking Link <span className="text-red-500">*</span>
+                    Third-Party Booking Link (e.g. Calendly, Cal.com){" "}
+                    <span className="text-red-500">*</span>
                   </span>
                   <input
                     {...register("bookingLink", { required: true })}
                     className="w-full rounded-lg border border-[#d6dddd] px-4 py-2 text-sm focus:border-[#004f52] focus:outline-none focus:ring-1 focus:ring-[#004f52]"
-                    placeholder="https://calendly.com/..."
+                    placeholder="https://calendly.com/your-username"
                   />
+                  <p className="mt-1 text-xs text-[#8a939a]">
+                    Direct booking URL so clients can book sessions directly
+                    without emailing.
+                  </p>
                 </label>
               </div>
 
