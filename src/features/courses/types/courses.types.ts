@@ -32,6 +32,7 @@ export type Course = {
   };
   price: number;
   courseBoxUrl?: string;
+  learningOutcomes?: string[];
   category: string;
   createdAt: string;
   updatedAt: string;

@@ -15,6 +15,7 @@ type FormValues = {
   title: string;
   price: string;
   courseBoxUrl: string;
+  learningOutcomes?: string;
   instructorName: string;
   instructorBio: string;
   lessons: {
@@ -39,6 +40,11 @@ export function EditCourseModal({ course, onClose }: EditCourseModalProps) {
       title: course.title || "",
       price: course.price?.toString() || "",
       courseBoxUrl: course.courseBoxUrl || "",
+      learningOutcomes: course.learningOutcomes
+        ? Array.isArray(course.learningOutcomes)
+          ? course.learningOutcomes.join("\n")
+          : ""
+        : "",
       instructorName: course.instructorName || "",
       instructorBio: course.instructorBio || "",
       lessons:
@@ -70,6 +76,16 @@ export function EditCourseModal({ course, onClose }: EditCourseModalProps) {
     }
     if (data.courseBoxUrl) {
       formData.append("courseBoxUrl", data.courseBoxUrl);
+    }
+    if (data.learningOutcomes !== undefined) {
+      const outcomes = data.learningOutcomes
+        .split("\n")
+        .map((s) => s.trim())
+        .filter(Boolean);
+      outcomes.forEach((out, idx) => {
+        formData.append(`learningOutcomes[${idx}]`, out);
+      });
+      formData.append("learningOutcomes", JSON.stringify(outcomes));
     }
     if (showInstructor && data.instructorName) {
       formData.append("instructorName", data.instructorName);
@@ -168,7 +184,7 @@ export function EditCourseModal({ course, onClose }: EditCourseModalProps) {
 
               <label className="block mb-5">
                 <span className="mb-1 block text-sm font-medium text-[#4a5559]">
-                  Course
+                  Course URL
                 </span>
                 <input
                   type="url"
@@ -176,6 +192,22 @@ export function EditCourseModal({ course, onClose }: EditCourseModalProps) {
                   className="w-full rounded-lg border border-[#d6dddd] px-4 py-2 text-sm focus:border-[#004f52] focus:outline-none focus:ring-1 focus:ring-[#004f52]"
                   placeholder="https://example.com/course"
                 />
+              </label>
+
+              <label className="block mb-5">
+                <span className="mb-1 block text-sm font-medium text-[#4a5559]">
+                  What You Will Gain / Learning Outcomes (Optional)
+                </span>
+                <textarea
+                  rows={3}
+                  {...register("learningOutcomes")}
+                  className="w-full rounded-lg border border-[#d6dddd] px-4 py-2 text-sm focus:border-[#004f52] focus:outline-none focus:ring-1 focus:ring-[#004f52]"
+                  placeholder="Enter each key outcome on a new line, e.g.:&#10;Master corporate Scope 1-3 GHG accounting&#10;Earn an industry-recognized Certificate of Completion"
+                />
+                <span className="text-[11px] text-gray-400 mt-0.5 block">
+                  Shown on course cards as key takeaways for prospective
+                  students.
+                </span>
               </label>
 
               {showThumbnail ? (

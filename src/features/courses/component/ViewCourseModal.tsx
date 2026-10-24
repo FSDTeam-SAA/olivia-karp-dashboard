@@ -94,6 +94,26 @@ export function ViewCourseModal({ course, onClose }: ViewCourseModalProps) {
           </div>
         </div>
 
+        {/* Learning Outcomes */}
+        {course?.learningOutcomes && course.learningOutcomes.length > 0 && (
+          <div className="mt-6 border-b border-[#e6ebeb] pb-6">
+            <h3 className="font-semibold mb-3 text-[#004f52]">
+              What You Will Gain / Learning Outcomes
+            </h3>
+            <ul className="space-y-2">
+              {course.learningOutcomes.map((outcome, idx) => (
+                <li
+                  key={idx}
+                  className="flex items-start gap-2 text-sm text-gray-700"
+                >
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#004f52] shrink-0 mt-2" />
+                  <span>{outcome}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         {/* Lessons */}
         <div className="mt-6">
           <h3 className="font-semibold mb-4">Curriculum</h3>
