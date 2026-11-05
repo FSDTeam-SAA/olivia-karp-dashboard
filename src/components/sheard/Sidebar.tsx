@@ -16,6 +16,7 @@ import {
   Settings,
   Star,
   Users,
+  UserCheck,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -61,6 +62,11 @@ const menuItems = [
     title: "Mentor & Coaches",
     icon: Users,
     href: "/mentors-coaches",
+  },
+  {
+    title: "Meet Climate People",
+    icon: UserCheck,
+    href: "/climate-profiles",
   },
   {
     title: "Courses",
