@@ -9,12 +9,14 @@ import {
   Plus,
   Check,
   Upload,
+  Trash2,
 } from "lucide-react";
 import { MentorCoach, Meta } from "../types/mentor.types";
 import { MentorProfileModal } from "./MentorProfileModal";
 import { AddMentorModal } from "./AddMentorModal";
 import { BulkUploadModal } from "./BulkUploadModal";
 import { ApproveMentorModal } from "./ApproveMentorModal";
+import { DeleteMentorModal } from "./DeleteMentorModal";
 import {
   useMentorsCoaches,
   useApproveMentorCoach,
@@ -38,10 +40,12 @@ function MentorCard({
   item,
   onViewProfile,
   onApproveClick,
+  onDeleteClick,
 }: {
   item: MentorCoach;
   onViewProfile: (item: MentorCoach) => void;
   onApproveClick: (item: MentorCoach) => void;
+  onDeleteClick: (item: MentorCoach) => void;
 }) {
   const fullName = `${item.firstName} ${item.lastName}`;
   const shortDescription =
@@ -75,17 +79,27 @@ function MentorCard({
     ...processedSkills,
   ].slice(0, 3);
 
+  const initials =
+    `${item.firstName?.[0] || ""}${item.lastName?.[0] || ""}`.toUpperCase() ||
+    "MC";
+
   return (
     <div className="rounded-[10px] border border-[#dde7eb] bg-white p-4 shadow-[0_2px_8px_rgba(0,0,0,0.02)] flex flex-col justify-between min-h-[380px]">
       <div>
         <div className="flex items-start gap-3">
-          <div className="relative h-[78px] w-[78px] shrink-0 overflow-hidden rounded-[8px]">
-            <Image
-              src={item.image?.url || "/images/profile.png"}
-              alt={fullName}
-              fill
-              className="object-cover"
-            />
+          <div className="relative h-[78px] w-[78px] shrink-0 overflow-hidden rounded-[8px] bg-slate-100">
+            {item.image?.url ? (
+              <Image
+                src={item.image.url}
+                alt={fullName}
+                fill
+                className="object-cover"
+              />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-[#004f52] to-[#0a727c] text-white font-bold text-lg">
+                {initials}
+              </div>
+            )}
             <span className="absolute bottom-1 right-1 h-3.5 w-3.5 rounded-full border-2 border-white bg-[#31c95f]" />
           </div>
 
@@ -159,7 +173,7 @@ function MentorCard({
       <div className="mt-4 flex items-center gap-2 pt-2 border-t border-[#f0f4f5]">
         <button
           onClick={() => onViewProfile(item)}
-          className="flex-1 rounded-[8px] border-2 border-[#004f52] bg-white px-4 py-2.5 text-[14px] font-semibold text-[#004f52] transition cursor-pointer bg-[#f4fbfb] hover:bg-[#eaf5f5]"
+          className="flex-1 rounded-[8px] border-2 border-[#004f52] bg-white px-4 py-2.5 text-[14px] font-semibold text-[#004f52] transition cursor-pointer hover:bg-[#eaf5f5]"
         >
           View Profile
         </button>
@@ -173,6 +187,14 @@ function MentorCard({
             <Check className="h-4 w-4" />
           </button>
         )}
+
+        <button
+          onClick={() => onDeleteClick(item)}
+          className="flex h-[42px] w-[42px] shrink-0 items-center justify-center rounded-[8px] border border-red-200 bg-red-50 text-red-600 transition hover:bg-red-100 hover:text-red-700 hover:border-red-300 cursor-pointer"
+          title="Delete Mentor/Coach"
+        >
+          <Trash2 className="h-4 w-4" />
+        </button>
       </div>
     </div>
   );
@@ -187,6 +209,9 @@ export default function MentorsCoaches() {
     null,
   );
   const [mentorToApprove, setMentorToApprove] = useState<MentorCoach | null>(
+    null,
+  );
+  const [mentorToDelete, setMentorToDelete] = useState<MentorCoach | null>(
     null,
   );
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -353,6 +378,7 @@ export default function MentorsCoaches() {
               item={item}
               onViewProfile={setSelectedMentor}
               onApproveClick={setMentorToApprove}
+              onDeleteClick={setMentorToDelete}
             />
           ))}
         </div>
@@ -419,6 +445,22 @@ export default function MentorsCoaches() {
           onClose={() => setSelectedMentor(null)}
           onApproveClick={(m) => {
             setMentorToApprove(m);
+          }}
+          onDeleteClick={(m) => {
+            setMentorToDelete(m);
+          }}
+        />
+      )}
+
+      {mentorToDelete && (
+        <DeleteMentorModal
+          mentor={mentorToDelete}
+          isOpen={!!mentorToDelete}
+          onClose={() => setMentorToDelete(null)}
+          onSuccess={() => {
+            if (selectedMentor && selectedMentor._id === mentorToDelete._id) {
+              setSelectedMentor(null);
+            }
           }}
         />
       )}

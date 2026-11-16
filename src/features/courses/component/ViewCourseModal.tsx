@@ -1,4 +1,4 @@
-import { BookOpen, Film, ToggleLeft, ToggleRight, X } from "lucide-react";
+import { BookOpen, Film, Lock, ToggleLeft, ToggleRight, X } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useToggleCourse } from "../hooks/useCourses";
@@ -128,8 +128,15 @@ export function ViewCourseModal({ course, onClose }: ViewCourseModalProps) {
                   className="border p-4 rounded mb-3 flex justify-between items-center"
                 >
                   <div>
-                    <h4 className="font-medium">
-                      {idx + 1}. {lesson?.title}
+                    <h4 className="font-medium flex items-center gap-1.5">
+                      <span>
+                        {idx + 1}. {lesson?.title}
+                      </span>
+                      {isLessonLocked && (
+                        <span title="Locked">
+                          <Lock size={14} className="text-gray-400" />
+                        </span>
+                      )}
                     </h4>
 
                     <div className="text-sm text-gray-500">
@@ -155,23 +162,24 @@ export function ViewCourseModal({ course, onClose }: ViewCourseModalProps) {
         </div>
 
         {/* Footer */}
-        {/* <div className="mt-6 flex justify-end items-center gap-2">
-          <span className="text-sm text-gray-600">
+        <div className="mt-6 flex justify-end items-center gap-2 pt-4 border-t border-[#e6ebeb]">
+          <span className="text-sm font-medium text-gray-600">
             {isOn ? "Available" : "Unavailable"}
           </span>
 
           <button
             onClick={handleToggle}
             disabled={isPending}
-            className="disabled:opacity-50 transition-opacity"
+            className="disabled:opacity-50 transition-opacity cursor-pointer"
+            title="Toggle course availability"
           >
             {isOn ? (
-              <ToggleRight className="h-8 w-8 text-green-600 cursor-pointer" />
+              <ToggleRight className="h-8 w-8 text-green-600" />
             ) : (
-              <ToggleLeft className="h-8 w-8 text-gray-400 cursor-pointer" />
+              <ToggleLeft className="h-8 w-8 text-gray-400" />
             )}
           </button>
-        </div> */}
+        </div>
       </div>
 
       {/* Video Player Modal */}
