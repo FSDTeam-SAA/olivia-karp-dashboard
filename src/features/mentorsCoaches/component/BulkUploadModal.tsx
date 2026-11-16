@@ -141,10 +141,20 @@ export function BulkUploadModal({ onClose }: BulkUploadModalProps) {
                 <FileSpreadsheet className="h-6 w-6 text-[#004f52]" />
                 Bulk Upload Mentors & Coaches
               </h2>
-              <p className="mt-1 text-sm text-[#7a99b8]">
-                Upload a CSV file to import multiple mentor/coach records in
-                bulk.
-              </p>
+              <div className="mt-1 flex items-center justify-between">
+                <p className="text-sm text-[#7a99b8]">
+                  Upload a CSV file to import multiple mentor/coach records in
+                  bulk.
+                </p>
+                <button
+                  type="button"
+                  onClick={downloadTemplate}
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-[#004f52] hover:underline cursor-pointer"
+                >
+                  <Download className="h-3.5 w-3.5" />
+                  Download Template
+                </button>
+              </div>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-5">

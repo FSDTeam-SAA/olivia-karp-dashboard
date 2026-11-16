@@ -67,3 +67,9 @@ export const bulkUploadMentorsCoaches = async (file: File) => {
   );
   return response.data;
 };
+
+// delete mentor or coach
+export const deleteMentorCoach = async (id: string) => {
+  const response = await axiosInstance.delete(`/mentors-coaches/${id}`);
+  return response.data;
+};

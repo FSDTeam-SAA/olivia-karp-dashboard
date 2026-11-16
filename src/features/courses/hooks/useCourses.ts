@@ -1,6 +1,7 @@
 // src/features/courses/hooks/useCourses.ts
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 import {
   createCourse,
   deleteCourse,
@@ -25,8 +26,17 @@ export const useCreateCourse = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createCourse,
-    onSuccess: () => {
+    onSuccess: (res: { message?: string }) => {
+      toast.success(res?.message || "Course created successfully");
       queryClient.invalidateQueries({ queryKey: ["courses"] });
+    },
+    onError: (err: unknown) => {
+      const message =
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message ||
+        (err as Error)?.message ||
+        "Failed to create course";
+      toast.error(message);
     },
   });
 };
@@ -35,8 +45,17 @@ export const useToggleCourse = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: toggleCourse,
-    onSuccess: () => {
+    onSuccess: (res: { message?: string }) => {
+      toast.success(res?.message || "Course availability updated");
       queryClient.invalidateQueries({ queryKey: ["courses"] });
+    },
+    onError: (err: unknown) => {
+      const message =
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message ||
+        (err as Error)?.message ||
+        "Failed to update availability";
+      toast.error(message);
     },
   });
 };
@@ -46,8 +65,17 @@ export const useUpdateCourse = () => {
   return useMutation({
     mutationFn: (data: { id: string; data: FormData }) =>
       updateCourse(data.id, data.data),
-    onSuccess: () => {
+    onSuccess: (res: { message?: string }) => {
+      toast.success(res?.message || "Course updated successfully");
       queryClient.invalidateQueries({ queryKey: ["courses"] });
+    },
+    onError: (err: unknown) => {
+      const message =
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message ||
+        (err as Error)?.message ||
+        "Failed to update course";
+      toast.error(message);
     },
   });
 };
@@ -56,8 +84,17 @@ export const useDeleteCourse = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: deleteCourse,
-    onSuccess: () => {
+    onSuccess: (res: { message?: string }) => {
+      toast.success(res?.message || "Course deleted successfully");
       queryClient.invalidateQueries({ queryKey: ["courses"] });
+    },
+    onError: (err: unknown) => {
+      const message =
+        (err as { response?: { data?: { message?: string } } })?.response?.data
+          ?.message ||
+        (err as Error)?.message ||
+        "Failed to delete course";
+      toast.error(message);
     },
   });
 };
