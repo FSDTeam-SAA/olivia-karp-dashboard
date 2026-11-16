@@ -9,11 +9,12 @@ import {
   Trash2,
 } from "lucide-react";
 import { useState } from "react";
-import { useCourses, useDeleteCourse } from "../hooks/useCourses";
+import { useCourses } from "../hooks/useCourses";
 import { Course, Meta } from "../types/courses.types";
 import { AddCourseModal } from "./AddCourseModal";
 import { ViewCourseModal } from "./ViewCourseModal";
 import { EditCourseModal } from "./EditCourseModal";
+import { DeleteCourseModal } from "./DeleteCourseModal";
 
 export default function Courses() {
   const [page, setPage] = useState(1);
@@ -21,16 +22,10 @@ export default function Courses() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [courseToEdit, setCourseToEdit] = useState<Course | null>(null);
+  const [courseToDelete, setCourseToDelete] = useState<Course | null>(null);
 
   // We are ignoring type/isApproved for now as they weren't in the demo
   const { data: response, isLoading, isError } = useCourses({ page, limit });
-  const { mutate: deleteCourseMutation } = useDeleteCourse();
-
-  const handleDelete = (id: string) => {
-    if (window.confirm("Are you sure you want to delete this course?")) {
-      deleteCourseMutation(id);
-    }
-  };
 
   const courses: Course[] = response?.data || [];
   const meta: Meta = response?.meta || {
@@ -154,7 +149,8 @@ export default function Courses() {
                           <Pencil className="h-4.5 w-4.5" />
                         </button>
                         <button
-                          onClick={() => handleDelete(course._id)}
+                          onClick={() => setCourseToDelete(course)}
+                          title="Delete Course"
                           className="transition hover:text-red-500 p-1 cursor-pointer"
                         >
                           <Trash2 className="h-4.5 w-4.5" />
@@ -226,6 +222,14 @@ export default function Courses() {
         <EditCourseModal
           course={courseToEdit}
           onClose={() => setCourseToEdit(null)}
+        />
+      )}
+
+      {courseToDelete && (
+        <DeleteCourseModal
+          course={courseToDelete}
+          isOpen={!!courseToDelete}
+          onClose={() => setCourseToDelete(null)}
         />
       )}
     </section>
